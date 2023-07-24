@@ -16,6 +16,15 @@ events with specific attributes (e.g. `"anonymous" <https://en.wikipedia.org/wik
 edits with IP addresses in specific ranges, or edits made by a wikipedia user whose username matches
 a specific regular expression).
 
+Install
+=======
+
+Install using ``pip``.
+
+..
+
+    pip install wikichangewatcher
+
 Examples
 ========
 
