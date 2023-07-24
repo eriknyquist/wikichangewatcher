@@ -1,0 +1,3 @@
+wikichanges-venv/*
+*.pyc
+*.pyo
