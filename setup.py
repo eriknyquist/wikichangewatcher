@@ -5,9 +5,13 @@ from wikichangewatcher import __version__
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 README = os.path.join(HERE, "README.rst")
+REQFILE = os.path.join(HERE, 'requirements.txt')
 
 with open(README, 'r') as f:
     long_description = f.read()
+
+with open(REQFILE, 'r') as fh:
+    dependencies = fh.readlines()
 
 setup(
     name='wikichangewatcher',
@@ -19,6 +23,7 @@ setup(
     author_email='eknyquist@gmail.com',
     license='Apache 2.0',
     packages=['wikichangewatcher'],
+    install_requires=dependencies,
     include_package_data=True,
     zip_safe=False,
     python_requires=">=3.7",
