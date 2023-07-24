@@ -3,6 +3,9 @@ WikiChangeWatcher
 
 .. contents:: Table of Contents
 
+Introduction
+============
+
 Wikipedia provides an `SSE Stream <https://en.wikipedia.org/wiki/Server-sent_events>`_  of
 all edits made to any page across Wikipedia, which allows you to watch all edits made to all wikipedia
 pages in real time.
