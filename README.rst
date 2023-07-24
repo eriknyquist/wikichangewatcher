@@ -63,16 +63,16 @@ The following example code watches for edits made by 3 specific IPv4 address ran
         wc.stop()
 
 
-Monitoring page edits made by usernames that match a provided regular expression
---------------------------------------------------------------------------------
+Monitoring page edits made by usernames that match a regular expression
+-----------------------------------------------------------------------
 
 The following example code watches for edits made by signed-in users with usernames
-that contain one or more strings matching a provided regular expression.
+that contain one or more strings matching a regular expression.
 
 .. code:: python
 
     # Example script showing how to use WikiChangeWatcher to watch for NON-"anonymous" edits to any
-    # wikipedia page, by usernames that contain a string matching a provided regular expression
+    # wikipedia page, by usernames that contain a string matching a regular expression
 
     import time
     from wikichangewatcher import WikiChangeWatcher, UsernameRegexSearchWatcher
@@ -100,7 +100,7 @@ Monitoring page edit events based on regular expression match on arbitary JSON f
 -------------------------------------------------------------------------------------
 
 The following example code watches for any page edit events where the specified JSON
-field matches contains one or more matches of the provided regular expression (available
+field matches contains one or more matches of a regular expression (available
 JSON fields and their descriptions can be found `here <https://www.mediawiki.org/wiki/Manual:RCFeed>`_).
 
 .. code:: python
