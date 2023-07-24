@@ -56,6 +56,7 @@ The following example code watches for edits made by 3 specific IPv4 address ran
 
     wc.run()
 
+    # Watch for page edits forever until KeyboardInterrupt
     try:
         while True:
             time.sleep(0.1)
@@ -90,6 +91,7 @@ that contain one or more strings matching a regular expression.
 
     wc.run()
 
+    # Watch for page edits forever until KeyboardInterrupt
     try:
         while True:
             time.sleep(0.1)
@@ -126,6 +128,7 @@ JSON fields and their descriptions can be found `here <https://www.mediawiki.org
 
     wc.run()
 
+    # Watch for page edits forever until KeyboardInterrupt
     try:
         while True:
             time.sleep(0.1)

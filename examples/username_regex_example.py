@@ -17,6 +17,7 @@ wc = WikiChangeWatcher([UsernameRegexSearchWatcher(on_match, r"[Bb]ot|BOT")])
 
 wc.run()
 
+# Watch for page edits forever until KeyboardInterrupt
 try:
     while True:
         time.sleep(0.1)

@@ -24,6 +24,7 @@ wc = WikiChangeWatcher([IpV4Watcher(on_match, "192.60.38.225-230"),
 
 wc.run()
 
+# Watch for page edits forever until KeyboardInterrupt
 try:
     while True:
         time.sleep(0.1)

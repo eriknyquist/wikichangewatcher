@@ -19,6 +19,7 @@ wc = WikiChangeWatcher([FieldRegexSearchWatcher(on_match, "title_url", r"[Pp]ubl
 
 wc.run()
 
+# Watch for page edits forever until KeyboardInterrupt
 try:
     while True:
         time.sleep(0.1)
