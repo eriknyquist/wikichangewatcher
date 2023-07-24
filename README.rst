@@ -11,8 +11,14 @@ events with specific attributes (e.g. `"anonymous" <https://en.wikipedia.org/wik
 edits with IP addresses in specific ranges, or edits made by a wikipedia user whose username matches
 a specific regular expression).
 
-Example
-=======
+Examples
+========
+
+Some example scripts illustrating how to use ``WikiChangeWatcher`` are presented in
+the following sections.
+
+Monitoring anonymous edits made from specific IP address ranges
+---------------------------------------------------------------
 
 The following example code watches for edits made by 3 specific IP address ranges
 
@@ -42,6 +48,40 @@ The following example code watches for edits made by 3 specific IP address range
     # You can also use the wildcard '*' character within IP addresses; the following line
     # sets up a watcher that triggers on any IP address (all anonymous edits)
     # wc = WikiChangeWatcher([IpV4Watcher(on_match, "*.*.*.*")])
+
+    wc.run()
+
+    try:
+        while True:
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        wc.stop()
+
+
+Monitoring edits made by usernames that match a provided regular expression
+---------------------------------------------------------------------------
+
+The following example code watches for edits made by signed-in users with usernames
+that contain one or more strings matching a provided regular expression
+
+.. code:: python
+
+    # Example script showing how to use WikiChangeWatcher to watch for NON-"anonymous" edits to any
+    # wikipedia page, by usernames that contain a string matching a provided regular expression
+
+    import time
+    from wikichangewatcher import WikiChangeWatcher, UsernameRegexSearchWatcher
+
+    # Callback function to run whenever an edit by a user with a username containing our regex is seen
+    def on_match(json_data):
+        """
+        json_data is a JSON-encoded event from the WikiMedia "recent changes" event stream,
+        as described here: https://www.mediawiki.org/wiki/Manual:RCFeed
+        """
+        print("{user} edited {title_url}".format(**json_data))
+
+    # Watch for edits made by users with "bot" in their username
+    wc = WikiChangeWatcher([UsernameRegexSearchWatcher(on_match, r"[Bb]ot|BOT")])
 
     wc.run()
 
