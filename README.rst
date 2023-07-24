@@ -32,11 +32,17 @@ The following example code watches for edits made by 3 specific IP address range
         """
         print("{user} edited {title_url}".format(**json_data))
 
+
     # Watch for anonymous edits from some known IP addresses within the UK houses of parliament
     # (taken from https://gist.github.com/Jonty/aabb42ab31d970dfb447, probably old/invalid by now)
     wc = WikiChangeWatcher([IpV4Watcher(on_match, "192.60.38.225-230"),
                             IpV4Watcher(on_match, "194.60.38.200-205"),
                             IpV4Watcher(on_match, "194.60.38.215-219")])
+
+    # You can also use the wildcard '*' character within IP addresses; the following line
+    # sets up a watcher that triggers on any IP address (all anonymous edits)
+    # wc = WikiChangeWatcher([IpV4Watcher(on_match, "*.*.*.*")])
+
     wc.run()
 
     try:

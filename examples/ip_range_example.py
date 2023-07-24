@@ -1,7 +1,10 @@
+# Example script showing how to use WikiChangeWatcher to watch for "anonymous" edits to any
+# wikipedia page from specific IP address ranges
+
 import time
 from wikichangewatcher import WikiChangeWatcher, IpV4Watcher
 
-# Callback function to run whenever an event matching our IP address pattern is seen
+# Callback function to run whenever an event matching our IPv4 address pattern is seen
 def on_match(json_data):
     """
     json_data is a JSON-encoded event from the WikiMedia "recent changes" event stream,
@@ -14,6 +17,11 @@ def on_match(json_data):
 wc = WikiChangeWatcher([IpV4Watcher(on_match, "192.60.38.225-230"),
                         IpV4Watcher(on_match, "194.60.38.200-205"),
                         IpV4Watcher(on_match, "194.60.38.215-219")])
+
+# You can also use the wildcard '*' character within IP addresses; the following line
+# sets up a watcher that triggers on any IP address (all anonymous edits)
+# wc = WikiChangeWatcher([IpV4Watcher(on_match, "*.*.*.*")])
+
 wc.run()
 
 try:
