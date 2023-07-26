@@ -42,7 +42,7 @@ The following example code watches for edits made by 3 specific IPv4 address ran
     # wikipedia page from specific IP address ranges
 
     import time
-    from wikichangewatcher import WikiChangeWatcher, IpV4Watcher
+    from wikichangewatcher import WikiChangeWatcher, IpV4Filter
 
     # Callback function to run whenever an event matching our IPv4 address pattern is seen
     def on_match(json_data):
@@ -55,13 +55,13 @@ The following example code watches for edits made by 3 specific IPv4 address ran
 
     # Watch for anonymous edits from some known IP addresses within the UK houses of parliament
     # (taken from https://gist.github.com/Jonty/aabb42ab31d970dfb447, probably old/invalid by now)
-    wc = WikiChangeWatcher([IpV4Watcher(on_match, "192.60.38.225-230"),
-                            IpV4Watcher(on_match, "194.60.38.200-205"),
-                            IpV4Watcher(on_match, "194.60.38.215-219")])
+    wc = WikiChangeWatcher([IpV4Filter(on_match, "192.60.38.225-230"),
+                            IpV4Filter(on_match, "194.60.38.200-205"),
+                            IpV4Filter(on_match, "194.60.38.215-219")])
 
     # You can also use the wildcard '*' character within IP addresses; the following line
     # sets up a watcher that triggers on any IP address (all anonymous edits)
-    # wc = WikiChangeWatcher([IpV4Watcher(on_match, "*.*.*.*")])
+    # wc = WikiChangeWatcher([IpV4Filter(on_match, "*.*.*.*")])
 
     wc.run()
 
@@ -85,7 +85,7 @@ that contain one or more strings matching a regular expression.
     # wikipedia page, by usernames that contain a string matching a regular expression
 
     import time
-    from wikichangewatcher import WikiChangeWatcher, UsernameRegexSearchWatcher
+    from wikichangewatcher import WikiChangeWatcher, UsernameRegexSearchFilter
 
     # Callback function to run whenever an edit by a user with a username containing our regex is seen
     def on_match(json_data):
@@ -96,7 +96,7 @@ that contain one or more strings matching a regular expression.
         print("{user} edited {title_url}".format(**json_data))
 
     # Watch for edits made by users with "bot" in their username
-    wc = WikiChangeWatcher([UsernameRegexSearchWatcher(on_match, r"[Bb]ot|BOT")])
+    wc = WikiChangeWatcher([UsernameRegexSearchFilter(on_match, r"[Bb]ot|BOT")])
 
     wc.run()
 
@@ -121,7 +121,7 @@ JSON fields and their descriptions can be found `here <https://www.mediawiki.org
     # provided by the SSE stream of wikipedia page edits
 
     import time
-    from wikichangewatcher import WikiChangeWatcher, FieldRegexSearchWatcher
+    from wikichangewatcher import WikiChangeWatcher, FieldRegexSearchFilter
 
     # Callback function to run whenever an edit is made to a page that has a regex match in the page URL
     def on_match(json_data):
@@ -133,7 +133,7 @@ JSON fields and their descriptions can be found `here <https://www.mediawiki.org
 
     # Watch for edits made to any page that has the word "publish" in the page URL
     # ("title_url" field in the JSON object)
-    wc = WikiChangeWatcher([FieldRegexSearchWatcher(on_match, "title_url", r"[Pp]ublish")])
+    wc = WikiChangeWatcher([FieldRegexSearchFilter(on_match, "title_url", r"[Pp]ublish")])
 
     wc.run()
 

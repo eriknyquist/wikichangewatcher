@@ -10,9 +10,9 @@ from sseclient import SSEClient
 WIKIMEDIA_URL = 'https://stream.wikimedia.org/v2/stream/recentchange'
 
 
-class FieldWatcher(object):
+class FieldFilter(object):
     """
-    Generic/abstract  class for checking whether a specific field of the "recent changes"
+    Generic/abstract class for checking whether a specific field of the "recent changes"
     JSON event data matches some expected format/values.
 
     The json_data provided to the on_match callback is an JSON-encoded event from the WikiMedia
@@ -37,13 +37,13 @@ def _ipv4_field_tostr(stringval):
     return intval
 
 
-class IpV4Watcher(FieldWatcher):
+class IpV4Filter(FieldFilter):
     """
     FieldWatcher implementation to watch for "user" fields that contain IPv4 addresses
     in the specified ranges
     """
     def __init__(self, on_match, ip_addr_pattern="*.*.*.*"):
-        super(IpV4Watcher, self).__init__(on_match)
+        super(IpV4Filter, self).__init__(on_match)
         self.ip_addr_pattern = []
 
         for x in ip_addr_pattern.split("."):
@@ -101,12 +101,12 @@ class IpV4Watcher(FieldWatcher):
         return True
 
 
-class FieldStringWatcher(FieldWatcher):
+class FieldStringFilter(FieldFilter):
     """
-    FieldWatcher implementation to watch for a named field with a specific fixed string
+    FieldFilter implementation to watch for a named field with a specific fixed string
     """
     def __init__(self, on_match, fieldname, value):
-        super(FieldStringWatcher, self).__init__(on_match)
+        super(FieldStringFilter, self).__init__(on_match)
         self.fieldname = fieldname
         self.value
 
@@ -117,12 +117,12 @@ class FieldStringWatcher(FieldWatcher):
         return json_data[self.fieldname] == self.value
 
 
-class FieldRegexMatchWatcher(FieldWatcher):
+class FieldRegexMatchFilter(FieldFilter):
     """
-    FieldWatcher implementation to watch for a named field that matches a provided regular expression
+    FieldFilter implementation to watch for a named field that matches a provided regular expression
     """
     def __init__(self, on_match, fieldname, regex):
-        super(FieldRegexMatchWatcher, self).__init__(on_match)
+        super(FieldRegexMatchFilter, self).__init__(on_match)
         self.fieldname = fieldname
         self.regex = re.compile(regex)
 
@@ -133,13 +133,13 @@ class FieldRegexMatchWatcher(FieldWatcher):
         return bool(self.regex.match(json_data[self.fieldname]))
 
 
-class FieldRegexSearchWatcher(FieldWatcher):
+class FieldRegexSearchFilter(FieldFilter):
     """
-    FieldWatcher implementation to watch for a named field that contains one or more instances of
+    FieldFilter implementation to watch for a named field that contains one or more instances of
     the provided regular expression
     """
     def __init__(self, on_match, fieldname, regex):
-        super(FieldRegexSearchWatcher, self).__init__(on_match)
+        super(FieldRegexSearchFilter, self).__init__(on_match)
         self.fieldname = fieldname
         self.regex = re.compile(regex)
 
@@ -150,43 +150,43 @@ class FieldRegexSearchWatcher(FieldWatcher):
         return bool(self.regex.search(json_data[self.fieldname]))
 
 
-class UsernameStringWatcher(FieldStringWatcher):
+class UsernameStringFilter(FieldStringFilter):
     """
-    FieldStringWatcher implementation to watch for a "user" field with a specific fixed string
+    FieldStringFilter implementation to watch for a "user" field with a specific fixed string
     """
     def __init__(self, on_match, string):
-        super(UsernameStringWatcher, self).__init__(on_match, "user", string)
+        super(UsernameStringFilter, self).__init__(on_match, "user", string)
 
 
-class UsernameRegexMatchWatcher(FieldRegexMatchWatcher):
+class UsernameRegexMatchFilter(FieldRegexMatchFilter):
     """
-    FieldRegexMatchWatcher implementation to watch for a "user" field that matches a provided regular expression
+    FieldRegexMatchFilter implementation to watch for a "user" field that matches a provided regular expression
     """
     def __init__(self, on_match, regex):
-        super(UsernameRegexMatchWatcher, self).__init__(on_match, "user", regex)
+        super(UsernameRegexMatchFilter, self).__init__(on_match, "user", regex)
 
 
-class UsernameRegexSearchWatcher(FieldRegexSearchWatcher):
+class UsernameRegexSearchFilter(FieldRegexSearchFilter):
     """
-    FieldRegexSearchWatcher implementation to watch for a "user" field that contains one or more matches of
+    FieldRegexSearchFilter implementation to watch for a "user" field that contains one or more matches of
     a provided regular expression
     """
     def __init__(self, on_match, regex):
-        super(UsernameRegexSearchWatcher, self).__init__(on_match, "user", regex)
+        super(UsernameRegexSearchFilter, self).__init__(on_match, "user", regex)
 
 
 class WikiChangeWatcher(object):
     """
     Consumes all events from the Wikimedia "recent changes" stream, and
-    applies all provided FieldWatcher instances to each received event.
+    applies all provided FieldFilter instances to each received event.
     """
-    def __init__(self, watchers=[]):
+    def __init__(self, filters=[]):
         self._thread = None
         self._stop_event = threading.Event()
-        self._watchers = watchers
+        self._filters = filters
 
-    def add_watcher(self, watcher):
-        self._watchers.append(watcher)
+    def add_filter(self, filter):
+        self._filters.append(filter)
 
     def run(self):
         self._thread = threading.Thread(target=self._thread_task)
@@ -208,5 +208,5 @@ class WikiChangeWatcher(object):
                 except ValueError:
                     continue
 
-                for w in self._watchers:
-                    w.check_match(change)
+                for f in self._filters:
+                    f.check_match(change)
