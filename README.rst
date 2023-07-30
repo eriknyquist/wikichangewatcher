@@ -21,7 +21,7 @@ Install
 
 Install using ``pip``.
 
-..
+::
 
     pip install wikichangewatcher
 
@@ -206,7 +206,7 @@ user with the word "bot" in their username.
         """
         print("{user} edited {title_url}".format(**json_data))
 
-    # Make a filter collection that matches any one of several multiple wikipedia pages
+    # Make a filter collection that matches any one of several wikipedia pages
     page_urls = FilterCollection(
         # Filters for any edits to multiple specific wikipedia page URLs
         PageUrlFilter("https://en.wikipedia.org/wiki/Python_(programming_language)"),
