@@ -3,9 +3,7 @@ WikiChangeWatcher
 
 .. contents:: Table of Contents
 
-.. raw:: html
-
-    <p style=text-align:center;"><img src="images/wikiwatcher_logo.png" width="50%" alt="WikiWatcher logo graphic"></p>
+.. image:: images/wikiwatcher_logo.png
 
 Introduction
 ============
