@@ -1,11 +1,11 @@
 WikiChangeWatcher
 =================
 
+.. contents:: Table of Contents
+
 .. raw:: html
 
-    <p style=text-align:center;"><img src="images/wikiwatcher_logo.png" width="100%" alt="WikiWatcher logo graphic"></p>
-
-.. contents:: Table of Contents
+    <p style=text-align:center;"><img src="images/wikiwatcher_logo.png" width="50%" alt="WikiWatcher logo graphic"></p>
 
 Introduction
 ============
