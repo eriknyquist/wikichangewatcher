@@ -5,7 +5,7 @@ import time
 from wikichangewatcher import WikiChangeWatcher, FilterCollection, UsernameRegexSearchFilter, PageUrlFilter, MatchType
 
 # Callback function to run whenever an event matching our filters is seen
-def on_match(json_data):
+def match_handler(json_data):
     """
     json_data is a JSON-encoded event from the WikiMedia "recent changes" event stream,
     as described here: https://www.mediawiki.org/wiki/Manual:RCFeed
@@ -24,7 +24,7 @@ page_urls = FilterCollection(
 main_filter = FilterCollection(
     page_urls,
     UsernameRegexSearchFilter(r"[Bb][Oo][Tt]")
-).set_match_type(MatchType.ALL)
+).set_match_type(MatchType.ALL).on_match(match_handler)
 
 wc = WikiChangeWatcher(main_filter)
 
