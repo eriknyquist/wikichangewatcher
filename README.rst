@@ -8,7 +8,7 @@ WikiChangeWatcher
 
     <p style=text-align:center;"><img src="images/wikiwatcher_logo.png" width="50%" alt="WikiWatcher logo graphic"></p>
 
-.. image:: images/wikiwatcher_logo.png
+.. image:: images/wikiwatcher_logo_smaller.png
     :align: center
 
 Introduction
