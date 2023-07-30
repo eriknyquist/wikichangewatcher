@@ -53,8 +53,6 @@ class FilterCollection(FieldFilter):
     def __init__(self, *filters):
         super(FilterCollection, self).__init__()
         self._filters = filters
-        self._on_all_match_handler = None
-        self._on_any_match_handler = None
         self._match_type = MatchType.ALL
 
     def set_match_type(self, match_type: int) -> Self:
