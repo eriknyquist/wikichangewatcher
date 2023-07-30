@@ -277,6 +277,9 @@ class WikiChangeWatcher(object):
         """
         Send stop event to the running WikiWatcher thread and wait for it to terminate
         """
+        if self._thread is None:
+            return
+
         # Use CPython API to inject a SystemExit exception into the WikiWatcher thread.
         # Unfortunately, sseclient lib does not provide any way to terminate waiting for
         # the next event, so this is the only way to stop the thread without having
@@ -292,6 +295,7 @@ class WikiChangeWatcher(object):
             raise SystemError("PyThreadState_SetAsyncExc failed")
 
         self._thread.join()
+        self._thread = None
 
     def _thread_task(self):
         for event in self._client:
