@@ -1,6 +1,7 @@
 __version__ = "0.0.1"
 
-from wikichangewatcher.wikichangewatcher import FieldFilter, IpV4Filter, WikiChangeWatcher
+from wikichangewatcher.wikichangewatcher import FieldFilter, FilterCollection, IpV4Filter, WikiChangeWatcher, MatchType
 from wikichangewatcher.wikichangewatcher import FieldStringFilter, FieldRegexMatchFilter, FieldRegexSearchFilter
-from wikichangewatcher.wikichangewatcher import UsernameStringFilter, UsernameRegexMatchFilter, UsernameRegexSearchFilter
+from wikichangewatcher.wikichangewatcher import UsernameFilter, UsernameRegexMatchFilter, UsernameRegexSearchFilter
+from wikichangewatcher.wikichangewatcher import PageUrlFilter, PageUrlRegexMatchFilter, PageUrlRegexSearchFilter
 
