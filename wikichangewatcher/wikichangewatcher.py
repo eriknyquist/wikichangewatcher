@@ -3,6 +3,7 @@ import sys
 import re
 import threading
 import json
+from typing import Callable, Type, Self
 
 from sseclient import SSEClient
 
@@ -21,17 +22,17 @@ class FieldFilter(object):
     def __init__(self):
         self._on_match = None
 
-    def on_match(self, on_match_handler):
+    def on_match(self, on_match_handler: Callable[[dict], None]) -> Self:
         self._on_match = on_match_handler
         return self
 
-    def _handler(self, json_data):
+    def _handler(self, json_data: dict) -> bool:
         raise NotImplementedError
 
-    def check_match(self, json_data):
+    def check_match(self, json_data: dict) -> bool:
         return self._handler(json_data)
 
-    def run_on_match(self, json_data):
+    def run_on_match(self, json_data: dict):
         if self._on_match is not None:
             self._on_match(json_data)
 
@@ -56,11 +57,16 @@ class FilterCollection(FieldFilter):
         self._on_any_match_handler = None
         self._match_type = MatchType.ALL
 
-    def set_match_type(self, match_type):
+    def set_match_type(self, match_type: int) -> Self:
+        """
+        Set match type for this collection. If MatchType.ALL, then this collection will
+        match only if all contained filters match. If MatchType.ANY, then this collection will
+        match if one of the contained filters match.
+        """
         self._match_type = match_type
         return self
 
-    def _handler(self, json_data):
+    def _handler(self, json_data: dict) -> bool:
         match = False
 
         if self._match_type == MatchType.ALL:
@@ -71,7 +77,7 @@ class FilterCollection(FieldFilter):
 
         return match
 
-def _ipv4_field_tostr(stringval):
+def _ipv4_field_tostr(stringval: str) -> int:
     intval = int(stringval)
     if not (0 <= intval <= 255):
         raise ValueError
@@ -113,7 +119,7 @@ class IpV4Filter(FieldFilter):
         if len(self.ip_addr_pattern) != 4:
             raise ValueError(f"Invalid number of fields ({len(self.ip_addr_pattern)}) for IP address pattern (expected 4)")
 
-    def _handler(self, json_data):
+    def _handler(self, json_data: dict) -> bool:
         if "user" not in json_data:
             return False
 
@@ -147,12 +153,12 @@ class FieldStringFilter(FieldFilter):
     """
     FieldFilter implementation to watch for a named field with a specific fixed string
     """
-    def __init__(self, fieldname, value):
+    def __init__(self, fieldname: str, value: str):
         super(FieldStringFilter, self).__init__()
         self.fieldname = fieldname
         self.value = value
 
-    def _handler(self, json_data):
+    def _handler(self, json_data: dict) -> bool:
         if self.fieldname not in json_data:
             return False
 
@@ -163,12 +169,12 @@ class FieldRegexMatchFilter(FieldFilter):
     """
     FieldFilter implementation to watch for a named field that matches a provided regular expression
     """
-    def __init__(self, fieldname, regex):
+    def __init__(self, fieldname: str, regex: str):
         super(FieldRegexMatchFilter, self).__init__()
         self.fieldname = fieldname
         self.regex = re.compile(regex)
 
-    def _handler(self, json_data):
+    def _handler(self, json_data: dict) -> bool:
         if self.fieldname not in json_data:
             return False
 
@@ -180,12 +186,12 @@ class FieldRegexSearchFilter(FieldFilter):
     FieldFilter implementation to watch for a named field that contains one or more instances of
     the provided regular expression
     """
-    def __init__(self, fieldname, regex):
+    def __init__(self, fieldname: str, regex: str):
         super(FieldRegexSearchFilter, self).__init__()
         self.fieldname = fieldname
         self.regex = re.compile(regex)
 
-    def _handler(self, json_data):
+    def _handler(self, json_data: dict) -> bool:
         if self.fieldname not in json_data:
             return False
 
@@ -196,7 +202,7 @@ class PageUrlFilter(FieldStringFilter):
     """
     FieldString Filter implementation to watch for a specific page URL
     """
-    def __init__(self, page_url):
+    def __init__(self, page_url: str):
         super(PageUrlFilter, self).__init__("title_url", page_url)
 
 
@@ -204,7 +210,7 @@ class PageUrlRegexMatchFilter(FieldRegexMatchFilter):
     """
     FieldRegexMatchFilter implementation to watch for a "title_url" field that matches a provided regular expression
     """
-    def __init__(self, regex):
+    def __init__(self, regex: str):
         super(UsernameRegexMatchFilter, self).__init__("title_url", regex)
 
 
@@ -213,7 +219,7 @@ class PageUrlRegexSearchFilter(FieldRegexSearchFilter):
     FieldRegexSearchFilter implementation to watch for a "title_url" field that contains one or more matches of
     a provided regular expression
     """
-    def __init__(self, regex):
+    def __init__(self, regex: str):
         super(UsernameRegexSearchFilter, self).__init__("title_url", regex)
 
 
@@ -221,7 +227,7 @@ class UsernameFilter(FieldStringFilter):
     """
     FieldStringFilter implementation to watch for a "user" field with a specific fixed string
     """
-    def __init__(self, string):
+    def __init__(self, string: str):
         super(UsernameFilter, self).__init__("user", string)
 
 
@@ -229,7 +235,7 @@ class UsernameRegexMatchFilter(FieldRegexMatchFilter):
     """
     FieldRegexMatchFilter implementation to watch for a "user" field that matches a provided regular expression
     """
-    def __init__(self, regex):
+    def __init__(self, regex: str):
         super(UsernameRegexMatchFilter, self).__init__("user", regex)
 
 
@@ -238,7 +244,7 @@ class UsernameRegexSearchFilter(FieldRegexSearchFilter):
     FieldRegexSearchFilter implementation to watch for a "user" field that contains one or more matches of
     a provided regular expression
     """
-    def __init__(self, regex):
+    def __init__(self, regex: str):
         super(UsernameRegexSearchFilter, self).__init__("user", regex)
 
 
@@ -252,15 +258,25 @@ class WikiChangeWatcher(object):
         self._stop_event = threading.Event()
         self._filters = filters
 
-    def add_filter(self, filter):
-        self._filters.append(filter)
+    def add_filter(self, fltr: Type[FieldFilter]) -> Self:
+        """
+        Add a new filter to the list of active filters
+        """
+        self._filters.append(fltr)
+        return self
 
     def run(self):
+        """
+        Start WikiWatcher running in a separate thread
+        """
         self._thread = threading.Thread(target=self._thread_task)
         self._thread.daemon = True
         self._thread.start()
 
     def stop(self):
+        """
+        Send stop event to the running WikiWatcher thread and wait for it to terminate
+        """
         self._stop_event.set()
         self._thread.join()
 
