@@ -269,6 +269,9 @@ class WikiChangeWatcher(object):
         """
         Start WikiWatcher running in a separate thread
         """
+        if self._thread is not None:
+            raise RuntimeError("'run()' has already been called!")
+
         self._thread = threading.Thread(target=self._thread_task)
         self._thread.daemon = True
         self._thread.start()
