@@ -16,7 +16,7 @@ with open(REQFILE, 'r') as fh:
 setup(
     name='wikichangewatcher',
     version=__version__,
-    description=('Real-time monitoring of global Wikipedia page edits'),
+    description=('Real-time monitoring/filtering of global Wikipedia page edits'),
     long_description=long_description,
     url='http://github.com/eriknyquist/wikichangewatcher',
     author='Erik Nyquist',
