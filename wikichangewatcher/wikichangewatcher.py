@@ -1,6 +1,8 @@
 import re
 import threading
+import requests
 import json
+import ctypes
 from typing import Callable, Type, Self
 
 from sseclient import SSEClient
@@ -253,6 +255,8 @@ class WikiChangeWatcher(object):
         self._thread = None
         self._stop_event = threading.Event()
         self._filters = filters
+        self._session = requests.Session()
+        self._client = SSEClient(WIKIMEDIA_URL, session=self._session)
 
     def add_filter(self, fltr: Type[FieldFilter]) -> Self:
         """
@@ -273,11 +277,24 @@ class WikiChangeWatcher(object):
         """
         Send stop event to the running WikiWatcher thread and wait for it to terminate
         """
-        self._stop_event.set()
+        # Use CPython API to inject a SystemExit exception into the WikiWatcher thread.
+        # Unfortunately, sseclient lib does not provide any way to terminate waiting for
+        # the next event, so this is the only way to stop the thread without having
+        # to wait for the next event.
+        exception = SystemExit
+        target_tid = self._thread.ident
+
+        ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(target_tid), ctypes.py_object(exception))
+        if ret == 0:
+            raise ValueError("Invalid thread ID")
+        elif ret > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(target_tid, NULL)
+            raise SystemError("PyThreadState_SetAsyncExc failed")
+
         self._thread.join()
 
     def _thread_task(self):
-        for event in SSEClient(WIKIMEDIA_URL):
+        for event in self._client:
             if self._stop_event.is_set():
                 return
 
