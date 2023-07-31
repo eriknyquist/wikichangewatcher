@@ -4,7 +4,6 @@
 import time
 import statistics
 import queue
-from typing import Callable, Self
 
 from wikichangewatcher import WikiChangeWatcher
 

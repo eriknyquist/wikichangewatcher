@@ -2,7 +2,7 @@
 # wikipedia page from IP address ranges that are publicly listed as being owned by various US government departments
 
 import time
-from wikichangewatcher import WikiChangeWatcher, IpV4Filter, FilterCollection, MatchType
+from wikichangewatcher import WikiChangeWatcher, IpV4Filter
 
 # Callback function to run whenever an event matching one of our IPv4 address ranges is seen
 def match_handler(json_data):
