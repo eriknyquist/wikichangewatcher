@@ -1,9 +1,9 @@
 WikiChangeWatcher
 =================
 
-.. contents:: Table of Contents
-
 .. image:: https://github.com/eriknyquist/wikichangewatcher/blob/7cf1660b5138367b71586e84899e3f96155829fe/images/wikiwatcher_github_banner.png
+
+.. contents:: Table of Contents
 
 Introduction
 ============
