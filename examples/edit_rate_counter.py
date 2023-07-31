@@ -6,7 +6,7 @@ import statistics
 import queue
 from typing import Callable, Self
 
-from wikichangewatcher import WikiChangeWatcher, IpV4Filter
+from wikichangewatcher import WikiChangeWatcher
 
 
 # Max. number of samples in the averaging window
@@ -69,7 +69,7 @@ class EditRateCounter():
 # Create rate counter class to monitor page edit rate over time
 ratecounter = EditRateCounter()
 
-# Create a watcher with no filters
+# Create a watcher with no filters-- we want to see every single edit
 wc = WikiChangeWatcher().on_edit(ratecounter.edit_handler)
 
 wc.run()
