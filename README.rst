@@ -12,13 +12,13 @@ Wikipedia provides an `SSE Stream <https://en.wikipedia.org/wiki/Server-sent_eve
 all edits made to any page across Wikipedia, which allows you to watch all edits made to all wikipedia
 pages in real time.
 
-``WikiChangeWatcher`` is just a thin wrapper around an SSE client, pointed at the URL for
-the SSE stream for wikipedia edits, with some filtering features that allow you to watch for page edit
-events with specific attributes (e.g. `"anonymous" <https://en.wikipedia.org/wiki/Wikipedia:IP_edits_are_not_anonymous>`_
-edits with IP addresses in specific ranges, or edits made by a wikipedia user whose username matches
-a specific regular expression).
+``WikiChangeWatcher`` is an SSE client that watches the SSE stream of wikipedia page edits,
+with some filtering features that allow you to watch for page edit events with specific attributes
+(e.g. `"anonymous" <https://en.wikipedia.org/wiki/Wikipedia:IP_edits_are_not_anonymous>`_
+edits with IP addresses in specific ranges, or edits made to a specific page, or edits made by a wikipedia
+user whose username matches a specific regular expression).
 
-This package is inspired by `Tom Scott's WikiParliament project <https://www.tomscott.com/wikiparliament/>`_
+This package is inspired by `Tom Scott's WikiParliament project <https://www.tomscott.com/wikiparliament/>`_.
 
 Install
 =======
