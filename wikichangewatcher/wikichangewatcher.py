@@ -257,6 +257,14 @@ class WikiChangeWatcher(object):
         self._filters = filters
         self._session = requests.Session()
         self._client = SSEClient(WIKIMEDIA_URL, session=self._session)
+        self._on_edit_handler = None
+
+    def on_edit(self, on_edit_handler: Callable[[dict], None]) -> Self:
+        """
+        Sets handler to run whenever any edit event is received (before any filters are processed)
+        """
+        self._on_edit_handler = on_edit_handler
+        return self
 
     def add_filter(self, fltr: Type[FieldFilter]) -> Self:
         """
@@ -310,6 +318,9 @@ class WikiChangeWatcher(object):
                     change = json.loads(event.data)
                 except ValueError:
                     continue
+
+                if self._on_edit_handler:
+                    self._on_edit_handler(change)
 
                 for f in self._filters:
                     if f.check_match(change):
