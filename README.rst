@@ -287,8 +287,8 @@ as the company name.
         wc.stop()
 
 
-Calculating a running a page-edit-per-minute rate for all of wikipedia
-----------------------------------------------------------------------
+Calculating a running average of page-edits-per-minute for all of wikipedia
+---------------------------------------------------------------------------
 
 The following example watches for any edit to any wikipedia page, and updates a
 running average of the rate of page edits per minute, which is printed to stdout
