@@ -3,7 +3,7 @@ WikiChangeWatcher
 
 .. contents:: Table of Contents
 
-.. image:: https://github.com/eriknyquist/wikichangewatcher/raw/master/images/wikichangewatcher_logo.png
+.. image:: https://github.com/eriknyquist/wikichangewatcher/blob/80ffe25fd4d0d694bba545bd46dcc31a37d664e7/images/wikiwatcher_logo.png
 
 Introduction
 ============
