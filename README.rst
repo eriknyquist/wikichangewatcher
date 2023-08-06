@@ -1,7 +1,7 @@
-WikiChangeWatcher
-=================
+WikiChangeWatcher 0.2.0
+=======================
 
-.. image:: https://github.com/eriknyquist/wikichangewatcher/blob/7cf1660b5138367b71586e84899e3f96155829fe/images/wikiwatcher_github_banner.png
+.. image:: images/wikiwatcher_github_banner.png
 
 .. contents:: Table of Contents
 
@@ -361,7 +361,6 @@ once every 5 seconds.
                 pass
 
             return ret
-
 
     # Create rate counter class to monitor page edit rate over time
     ratecounter = EditRateCounter()
