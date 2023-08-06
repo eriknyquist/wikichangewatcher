@@ -33,7 +33,7 @@ wc.run()
 
 # Watch for page edits forever until KeyboardInterrupt
 try:
-    while True:
+    while wc.is_running():
         time.sleep(0.1)
 except KeyboardInterrupt:
     wc.stop()

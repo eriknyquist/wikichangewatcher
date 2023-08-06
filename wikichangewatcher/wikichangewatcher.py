@@ -358,7 +358,7 @@ class WikiChangeWatcher(object):
 
     def run(self):
         """
-        Start WikiWatcher running in a separate thread
+        Start WikiChangeWatcher running in a separate thread
         """
         if self._thread is not None:
             raise RuntimeError("'run()' has already been called!")
@@ -366,6 +366,15 @@ class WikiChangeWatcher(object):
         self._thread = threading.Thread(target=self._thread_task)
         self._thread.daemon = True
         self._thread.start()
+
+    def is_running(self):
+        """
+        Returns true if WikiChangeWatcher thread is active
+        """
+        if self._thread is None:
+            return False
+
+        return self._thread.is_alive()
 
     def stop(self):
         """
@@ -399,7 +408,7 @@ class WikiChangeWatcher(object):
                 self._event_loop()
             except requests.exceptions.ConnectionError:
                 if self._retry_count >= self._max_retries:
-                    raise RuntimeError(f"failed to re-connect after {num_retries} attempts")
+                    raise RuntimeError(f"failed to re-connect after {self._max_retries} attempts")
                 else:
                     self._retry_count += 1
                     logger.warning(f"stream connection failed, retrying {self._retry_count}/{self._max_retries}")

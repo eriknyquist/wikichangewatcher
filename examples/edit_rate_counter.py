@@ -75,7 +75,7 @@ wc.run()
 
 # Watch for page edits forever until KeyboardInterrupt
 try:
-    while True:
+    while wc.is_running():
         ratecounter.run()
         new_rate = ratecounter.get_rate()
         if new_rate:
