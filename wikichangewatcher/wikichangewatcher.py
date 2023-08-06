@@ -3,10 +3,13 @@ import threading
 import requests
 import json
 import ctypes
+import logging
 from typing import Callable, Type, Self
 
 from sseclient import SSEClient
 
+
+logger = logging.getLogger(__name__)
 
 WIKIMEDIA_URL = 'https://stream.wikimedia.org/v2/stream/recentchange'
 
@@ -327,9 +330,17 @@ class WikiChangeWatcher(object):
         self._thread = None
         self._stop_event = threading.Event()
         self._filters = filters
+        self._session = None
+        self._client = None
+        self._on_edit_handler = None
+        self._retry_count = 0
+        self._max_retries = 10
+        self._connect()
+
+    def _connect(self):
         self._session = requests.Session()
         self._client = SSEClient(WIKIMEDIA_URL, session=self._session)
-        self._on_edit_handler = None
+        logger.debug(f"connected to {WIKIMEDIA_URL}")
 
     def on_edit(self, on_edit_handler: Callable[[dict], None]) -> Self:
         """
@@ -363,6 +374,8 @@ class WikiChangeWatcher(object):
         if self._thread is None:
             return
 
+        logger.debug("stopping")
+
         # Use CPython API to inject a SystemExit exception into the WikiWatcher thread.
         # Unfortunately, sseclient lib does not provide any way to terminate waiting for
         # the next event, so this is the only way to stop the thread without having
@@ -381,10 +394,22 @@ class WikiChangeWatcher(object):
         self._thread = None
 
     def _thread_task(self):
+        while True:
+            try:
+                self._event_loop()
+            except requests.exceptions.ConnectionError:
+                if self._retry_count >= self._max_retries:
+                    raise RuntimeError(f"failed to re-connect after {num_retries} attempts")
+                else:
+                    self._retry_count += 1
+                    logger.warning(f"stream connection failed, retrying {self._retry_count}/{self._max_retries}")
+
+    def _event_loop(self):
         for event in self._client:
             if self._stop_event.is_set():
                 return
 
+            self._retry_count = 0
             if event.event == "message":
                 try:
                     change = json.loads(event.data)
