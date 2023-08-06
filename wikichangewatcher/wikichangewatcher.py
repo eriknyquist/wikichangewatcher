@@ -147,6 +147,78 @@ class IpV4Filter(FieldFilter):
         return True
 
 
+def _ipv6_field_tostr(stringval: str) -> int:
+    intval = int(stringval, 16)
+    if not (0 <= intval <= 65535):
+        raise ValueError
+
+    return intval
+
+
+class IpV6Filter(FieldFilter):
+    """
+    FieldWatcher implementation to watch for "user" fields that contain IPv6 addresses
+    in the specified ranges
+    """
+    def __init__(self, ip_addr_pattern="*:*:*:*:*:*:*:*"):
+        super(IpV6Filter, self).__init__()
+        self.ip_addr_pattern = []
+
+        for x in ip_addr_pattern.split(":"):
+            error = False
+
+            if x == "*":
+                self.ip_addr_pattern.append(None)
+            else:
+                ranges = x.split('-')
+                if len(ranges) == 2:
+                    try:
+                        self.ip_addr_pattern.append((_ipv6_field_tostr(ranges[0]), _ipv6_field_tostr(ranges[1])))
+                    except ValueError:
+                        error = True
+
+                else:
+                    try:
+                        self.ip_addr_pattern.append(_ipv6_field_tostr(x))
+                    except ValueError:
+                        error = True
+
+            if error:
+                raise ValueError(f"Invalid field '{x}' in IP address pattern '{ip_addr_pattern}'")
+
+        if len(self.ip_addr_pattern) != 8:
+            raise ValueError(f"Invalid number of fields ({len(self.ip_addr_pattern)}) for IP address pattern (expected 8)")
+
+    def _handler(self, json_data: dict) -> bool:
+        if "user" not in json_data:
+            return False
+
+        ipaddr = json_data["user"]
+
+        try:
+            fields = [int(x, 16) for x in ipaddr.split(":")]
+        except ValueError:
+            return False
+
+        if len(fields) != 8:
+            return False
+
+        for i in range(len(fields)):
+            if self.ip_addr_pattern[i] is None:
+                continue
+
+            elif type(self.ip_addr_pattern[i]) == tuple:
+                range_lo = self.ip_addr_pattern[i][0]
+                range_hi = self.ip_addr_pattern[i][1]
+                if (fields[i] < range_lo) or (fields[i] > range_hi):
+                    return False
+
+            elif self.ip_addr_pattern[i] != fields[i]:
+                return False
+
+        return True
+
+
 class FieldStringFilter(FieldFilter):
     """
     FieldFilter implementation to watch for a named field with a specific fixed string
