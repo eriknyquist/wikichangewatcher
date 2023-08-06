@@ -36,4 +36,3 @@ try:
         time.sleep(0.1)
 except KeyboardInterrupt:
     wc.stop()
-
