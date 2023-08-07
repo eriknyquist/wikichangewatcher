@@ -268,6 +268,56 @@ user with the word "bot" in their username.
     except KeyboardInterrupt:
         wc.stop()
 
+Using bitwise AND/OR operators to create ``FilterCollection`` classes
+---------------------------------------------------------------------
+
+Instead of creating FilterCollection class directly, you can  instead use bitwise AND ``&``
+and bitwise OR ``|`` to combine filter objects.
+
+For example, this code uses the bitwise OR operator to create a filter that matches any
+IPv4 address, *or* any IPv6 address:
+
+.. code:: python
+
+    from wikichangewatcher import IpV4Filter, IpV6Filter
+
+    # Callback function to run whenever an event matching our filters is seen
+    def match_handler(json_data):
+        print("{user} edited {title_url}".format(**json_data))
+
+    filter_collection = (IpV4Filter() | IpV6Filter()).on_match(match_handler)
+
+And this code creates an equivalent filter, but uses the ``FilterCollection`` class
+directly instead:
+
+.. code:: python
+
+    from wikichangewatcher import IpV4Filter, IpV6Filter, FilterCollection, MatchType
+
+    # Callback function to run whenever an event matching our filters is seen
+    def match_handler(json_data):
+        print("{user} edited {title_url}".format(**json_data))
+
+    filter_collection = FilterCollection(
+        IpV4Filter(), IpV6Filter()
+    ).set_match_type(MatchType.ANY).on_match(match_handler)
+
+Finally, here is a slightly more complex example, which uses both bitwise AND / OR
+operators to create a filter that matches any IPv6 or IPv6 address, *and* a specific
+page URL:
+
+.. code:: python
+
+    from wikichangewatcher import IpV4Filter, IpV6Filter, PageUrlFilter
+
+    PAGE_URL = "https://en.wikipedia.org/wiki/Hayaguchi_Station"
+
+    # Callback function to run whenever an event matching our filters is seen
+    def match_handler(json_data):
+        print("{user} edited {title_url}".format(**json_data))
+
+    filter_collection = ((IpV4Filter() | IpV6Filter()) & PageUrlFilter(PAGE_URL)).on_match(match_handler)
+
 Monitoring "anonymous" edits made from IP address ranges owned by US government depts./agencies
 -----------------------------------------------------------------------------------------------
 
