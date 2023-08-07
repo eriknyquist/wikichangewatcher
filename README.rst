@@ -271,7 +271,7 @@ user with the word "bot" in their username.
 Using bitwise AND/OR operators to create ``FilterCollection`` classes
 ---------------------------------------------------------------------
 
-Instead of creating FilterCollection class directly, you can  instead use bitwise AND ``&``
+Instead of creating FilterCollection classes directly, you can instead use bitwise AND ``&``
 and bitwise OR ``|`` to combine filter objects.
 
 For example, this code uses the bitwise OR operator to create a filter that matches any
@@ -303,7 +303,7 @@ directly instead:
     ).set_match_type(MatchType.ANY).on_match(match_handler)
 
 Finally, here is a slightly more complex example, which uses both bitwise AND / OR
-operators to create a filter that matches any IPv6 or IPv6 address, *and* a specific
+operators together to create a filter that matches any IPv4 or IPv6 address, *and* a specific
 page URL:
 
 .. code:: python
