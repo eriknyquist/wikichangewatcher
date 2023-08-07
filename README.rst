@@ -1,7 +1,7 @@
 WikiChangeWatcher 0.2.0
 =======================
 
-.. image:: images/wikiwatcher_github_banner.png
+.. image:: https://raw.githubusercontent.com/eriknyquist/wikichangewatcher/5f8e204db0af39d0a0ed00e5884a38544e11321a/images/wikiwatcher_github_banner.png
 
 .. contents:: Table of Contents
 

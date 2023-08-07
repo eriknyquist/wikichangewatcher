@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wikichangewatcher.wikichangewatcher &mdash; wikichangewatcher v0.2.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            wikichangewatcher
+          </a>
+              <div class="version">
+                v0.2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">wikichangewatcher</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">wikichangewatcher</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">wikichangewatcher.wikichangewatcher</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for wikichangewatcher.wikichangewatcher</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Self</span>
+
+<span class="kn">from</span> <span class="nn">sseclient</span> <span class="kn">import</span> <span class="n">SSEClient</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">WIKIMEDIA_URL</span> <span class="o">=</span> <span class="s1">&#39;https://stream.wikimedia.org/v2/stream/recentchange&#39;</span>
+
+
+<div class="viewcode-block" id="FieldFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldFilter">[docs]</a><span class="k">class</span> <span class="nc">FieldFilter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic/abstract class for checking whether a specific field of the &quot;recent changes&quot;</span>
+<span class="sd">    JSON event data matches some expected format/values.</span>
+
+<span class="sd">    The json_data provided to the on_match callback is an JSON-encoded event from the WikiMedia</span>
+<span class="sd">    &quot;recent changes&quot; event stream, as described here: https://www.mediawiki.org/wiki/Manual:RCFeed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FieldFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_match</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="FieldFilter.on_match"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldFilter.on_match">[docs]</a>    <span class="k">def</span> <span class="nf">on_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on_match_handler</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set a function to be called when an edit event matching this filter is seen</span>
+
+<span class="sd">        :param on_match_handler: callback function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_match</span> <span class="o">=</span> <span class="n">on_match_handler</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="FieldFilter.check_match"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldFilter.check_match">[docs]</a>    <span class="k">def</span> <span class="nf">check_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if an edit event matches this filter</span>
+
+<span class="sd">        :param json_data: Edit event to check</span>
+
+<span class="sd">        :return: True if match</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FieldFilter.run_on_match"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldFilter.run_on_match">[docs]</a>    <span class="k">def</span> <span class="nf">run_on_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if edit event matches this filter, and run on_match handler if it does match.</span>
+
+<span class="sd">        :param json_data: Edit event to check</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_on_match</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="MatchType"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.MatchType">[docs]</a><span class="k">class</span> <span class="nc">MatchType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates all match types handled by a FilterCollection</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ANY</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="FilterCollection"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FilterCollection">[docs]</a><span class="k">class</span> <span class="nc">FilterCollection</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Filter object that holds multiple filters, and can run a callback if all or any one</span>
+<span class="sd">    of the filters matches</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FilterCollection.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FilterCollection.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">filters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param filters: one or more filter instances to use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FilterCollection</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="n">filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_match_type</span> <span class="o">=</span> <span class="n">MatchType</span><span class="o">.</span><span class="n">ALL</span></div>
+
+<div class="viewcode-block" id="FilterCollection.set_match_type"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FilterCollection.set_match_type">[docs]</a>    <span class="k">def</span> <span class="nf">set_match_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">match_type</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set match type for this collection. If MatchType.ALL, then this collection will</span>
+<span class="sd">        match only if all contained filters match. If MatchType.ANY, then this collection will</span>
+<span class="sd">        match if one of the contained filters match.</span>
+
+<span class="sd">        :match_type: Match type, must be one of the values defined in wikichangewatcher.MatchType</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_match_type</span> <span class="o">=</span> <span class="n">match_type</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_type</span> <span class="o">==</span> <span class="n">MatchType</span><span class="o">.</span><span class="n">ALL</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">check_match</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_type</span> <span class="o">==</span> <span class="n">MatchType</span><span class="o">.</span><span class="n">ANY</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">check_match</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">match</span></div>
+
+<span class="k">def</span> <span class="nf">_ipv4_field_tostr</span><span class="p">(</span><span class="n">stringval</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">intval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stringval</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">intval</span> <span class="o">&lt;=</span> <span class="mi">255</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+
+    <span class="k">return</span> <span class="n">intval</span>
+
+
+<div class="viewcode-block" id="IpV4Filter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.IpV4Filter">[docs]</a><span class="k">class</span> <span class="nc">IpV4Filter</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldFilter implementation to watch for &quot;user&quot; fields that contain IPv4 addresses</span>
+<span class="sd">    in the specified ranges</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="IpV4Filter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.IpV4Filter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip_addr_pattern</span><span class="o">=</span><span class="s2">&quot;*.*.*.*&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        IPv4 address pattern to use. Each of the 4 dot-seperated fields may be one of</span>
+<span class="sd">        the following:</span>
+
+<span class="sd">        - A decimal integer from 0 through 255, representing exactly and only the written value.</span>
+<span class="sd">        - A range of values in the form &quot;0-255&quot; (two decimal integers, both between 0 and 255, separated</span>
+<span class="sd">          by a dash), representing any value between and including the two written values.</span>
+<span class="sd">        - An asterisk &#39;\*&#39;, representing any value from 0 through 255.</span>
+
+<span class="sd">        These can be used in combination. For example:</span>
+
+<span class="sd">        - &quot;\*.\*.\*.\*&quot; matches any valid IPv4 address</span>
+
+<span class="sd">        - &quot;192.88.99.77&quot; matches only one specific IPv4 address, 192.88.99.77</span>
+
+<span class="sd">        - &quot;192.88.0-9.\*&quot; matches 2,550 specific IPv4 addresses:</span>
+
+<span class="sd">           192.88.0.0</span>
+
+<span class="sd">           192.88.0.1</span>
+
+<span class="sd">           192.88.0.2</span>
+
+<span class="sd">           ...</span>
+
+<span class="sd">           And so on, all the way up to 192.88.9.255</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IpV4Filter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ip_addr_pattern</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ranges</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">_ipv4_field_tostr</span><span class="p">(</span><span class="n">ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">_ipv4_field_tostr</span><span class="p">(</span><span class="n">ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_ipv4_field_tostr</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid field &#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&#39; in IP address pattern &#39;</span><span class="si">{</span><span class="n">ip_addr_pattern</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid number of fields (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">)</span><span class="si">}</span><span class="s2">) for IP address pattern (expected 4)&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;user&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">ipaddr</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ipaddr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+                <span class="n">range_lo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">range_hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">range_lo</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">range_hi</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<span class="k">def</span> <span class="nf">_ipv6_field_tostr</span><span class="p">(</span><span class="n">stringval</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">intval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stringval</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">intval</span> <span class="o">&lt;=</span> <span class="mi">65535</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+
+    <span class="k">return</span> <span class="n">intval</span>
+
+
+<div class="viewcode-block" id="IpV6Filter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.IpV6Filter">[docs]</a><span class="k">class</span> <span class="nc">IpV6Filter</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldFilter implementation to watch for &quot;user&quot; fields that contain IPv6 addresses</span>
+<span class="sd">    in the specified ranges</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="IpV6Filter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.IpV6Filter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip_addr_pattern</span><span class="o">=</span><span class="s2">&quot;*:*:*:*:*:*:*:*&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        IPv6 address pattern to use. Each of the 8 dot-seperated fields may be one of</span>
+<span class="sd">        the following:</span>
+
+<span class="sd">        - A hexadecimal integer from 0 through ffff, representing exactly and only the written value.</span>
+<span class="sd">        - A range of values in the form &quot;0-255&quot; (two hexadecimal integers, both between 0 and ffff, separated</span>
+<span class="sd">          by a dash), representing any value between and including the two written values.</span>
+<span class="sd">        - An asterisk &#39;\*&#39;, representing any value from 0 through ffff.</span>
+
+<span class="sd">        These can be used in combination. For example:</span>
+
+<span class="sd">        - &quot;\*:\*:\*:\*:\*:\*:\*:\*&quot; matches any valid IPv6 address</span>
+
+<span class="sd">        - &quot;00.11.22.33.44.55.66.77&quot; matches only one specific IPv6 address, 00.11.22.33.44.55.66.77</span>
+
+<span class="sd">        - &quot;00.11.22.33.44.55.0-9.\*&quot; matches 655,350 specific IPv6 addresses:</span>
+
+<span class="sd">           00.11.22.33.44.55.0.0</span>
+
+<span class="sd">           00.11.22.33.44.55.0.1</span>
+
+<span class="sd">           00.11.22.33.44.55.0.2</span>
+
+<span class="sd">           ...</span>
+
+<span class="sd">           And so on, all the way up to 00.11.22.33.44.55.9.ffff</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IpV6Filter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ip_addr_pattern</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">):</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ranges</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">_ipv6_field_tostr</span><span class="p">(</span><span class="n">ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">_ipv6_field_tostr</span><span class="p">(</span><span class="n">ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_ipv6_field_tostr</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid field &#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&#39; in IP address pattern &#39;</span><span class="si">{</span><span class="n">ip_addr_pattern</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid number of fields (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">)</span><span class="si">}</span><span class="s2">) for IP address pattern (expected 8)&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;user&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">ipaddr</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ipaddr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+                <span class="n">range_lo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">range_hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">range_lo</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">range_hi</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_addr_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="FieldStringFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldStringFilter">[docs]</a><span class="k">class</span> <span class="nc">FieldStringFilter</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldFilter implementation to watch for a named field with a specific fixed string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FieldStringFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldStringFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FieldStringFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="o">=</span> <span class="n">fieldname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span></div>
+
+    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">json_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="FieldRegexMatchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter">[docs]</a><span class="k">class</span> <span class="nc">FieldRegexMatchFilter</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldFilter implementation to watch for a named field that matches a provided regular expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FieldRegexMatchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FieldRegexMatchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="o">=</span> <span class="n">fieldname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="FieldRegexSearchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter">[docs]</a><span class="k">class</span> <span class="nc">FieldRegexSearchFilter</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldFilter implementation to watch for a named field that contains one or more instances of</span>
+<span class="sd">    the provided regular expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FieldRegexSearchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FieldRegexSearchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="o">=</span> <span class="n">fieldname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="PageUrlFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlFilter">[docs]</a><span class="k">class</span> <span class="nc">PageUrlFilter</span><span class="p">(</span><span class="n">FieldStringFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldString Filter implementation to watch for a specific page URL</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PageUrlFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PageUrlFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;title_url&quot;</span><span class="p">,</span> <span class="n">page_url</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PageUrlRegexMatchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter">[docs]</a><span class="k">class</span> <span class="nc">PageUrlRegexMatchFilter</span><span class="p">(</span><span class="n">FieldRegexMatchFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldRegexMatchFilter implementation to watch for a &quot;title_url&quot; field that matches a provided regular expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PageUrlRegexMatchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameRegexMatchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;title_url&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PageUrlRegexSearchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter">[docs]</a><span class="k">class</span> <span class="nc">PageUrlRegexSearchFilter</span><span class="p">(</span><span class="n">FieldRegexSearchFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldRegexSearchFilter implementation to watch for a &quot;title_url&quot; field that contains one or more matches of</span>
+<span class="sd">    a provided regular expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PageUrlRegexSearchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameRegexSearchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;title_url&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UsernameFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameFilter">[docs]</a><span class="k">class</span> <span class="nc">UsernameFilter</span><span class="p">(</span><span class="n">FieldStringFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldStringFilter implementation to watch for a &quot;user&quot; field with a specific fixed string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="UsernameFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UsernameRegexMatchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter">[docs]</a><span class="k">class</span> <span class="nc">UsernameRegexMatchFilter</span><span class="p">(</span><span class="n">FieldRegexMatchFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldRegexMatchFilter implementation to watch for a &quot;user&quot; field that matches a provided regular expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="UsernameRegexMatchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameRegexMatchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UsernameRegexSearchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameRegexSearchFilter">[docs]</a><span class="k">class</span> <span class="nc">UsernameRegexSearchFilter</span><span class="p">(</span><span class="n">FieldRegexSearchFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FieldRegexSearchFilter implementation to watch for a &quot;user&quot; field that contains one or more matches of</span>
+<span class="sd">    a provided regular expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="UsernameRegexSearchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameRegexSearchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameRegexSearchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="WikiChangeWatcher"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher">[docs]</a><span class="k">class</span> <span class="nc">WikiChangeWatcher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Consumes all events from the Wikimedia &quot;recent changes&quot; stream, and</span>
+<span class="sd">    applies all provided FieldFilter instances to each received event.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="WikiChangeWatcher.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">filters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="n">filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_edit_handler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_retry_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_retries</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">SSEClient</span><span class="p">(</span><span class="n">WIKIMEDIA_URL</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;connected to </span><span class="si">{</span><span class="n">WIKIMEDIA_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WikiChangeWatcher.on_edit"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.on_edit">[docs]</a>    <span class="k">def</span> <span class="nf">on_edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on_edit_handler</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets handler to run whenever any edit event is received (before any filters are processed)</span>
+
+<span class="sd">        :param on_edit_handler: Handler to run on edit event</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_edit_handler</span> <span class="o">=</span> <span class="n">on_edit_handler</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="WikiChangeWatcher.add_filter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.add_filter">[docs]</a>    <span class="k">def</span> <span class="nf">add_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fltr</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">FieldFilter</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new filter to the list of active filters</span>
+
+<span class="sd">        :param fltr: filter instance to add</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fltr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="WikiChangeWatcher.run"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start WikiChangeWatcher running in a separate thread</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;&#39;run()&#39; has already been called!&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_task</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WikiChangeWatcher.is_running"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.is_running">[docs]</a>    <span class="k">def</span> <span class="nf">is_running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns true if WikiChangeWatcher thread is active</span>
+
+<span class="sd">        :return: True if thread is active</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WikiChangeWatcher.stop"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send stop event to the running WikiWatcher thread and wait for it to terminate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Use CPython API to inject a SystemExit exception into the WikiWatcher thread.</span>
+        <span class="c1"># Unfortunately, sseclient lib does not provide any way to terminate waiting for</span>
+        <span class="c1"># the next event, so this is the only way to stop the thread without having</span>
+        <span class="c1"># to wait for the next event.</span>
+        <span class="n">exception</span> <span class="o">=</span> <span class="ne">SystemExit</span>
+        <span class="n">target_tid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="o">.</span><span class="n">ident</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyThreadState_SetAsyncExc</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">(</span><span class="n">target_tid</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">py_object</span><span class="p">(</span><span class="n">exception</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid thread ID&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ret</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyThreadState_SetAsyncExc</span><span class="p">(</span><span class="n">target_tid</span><span class="p">,</span> <span class="n">NULL</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span><span class="s2">&quot;PyThreadState_SetAsyncExc failed&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">_thread_task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_event_loop</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retry_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_retries</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;failed to re-connect after </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_retries</span><span class="si">}</span><span class="s2"> attempts&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_retry_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stream connection failed, retrying </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_retry_count</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_retries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_event_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                <span class="k">return</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_retry_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">change</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_edit_handler</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_on_edit_handler</span><span class="p">(</span><span class="n">change</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">check_match</span><span class="p">(</span><span class="n">change</span><span class="p">):</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">run_on_match</span><span class="p">(</span><span class="n">change</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Erik K. Nyquist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

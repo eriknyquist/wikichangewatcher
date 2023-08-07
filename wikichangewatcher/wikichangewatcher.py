@@ -26,6 +26,11 @@ class FieldFilter(object):
         self._on_match = None
 
     def on_match(self, on_match_handler: Callable[[dict], None]) -> Self:
+        """
+        Set a function to be called when an edit event matching this filter is seen
+
+        :param on_match_handler: callback function
+        """
         self._on_match = on_match_handler
         return self
 
@@ -33,9 +38,22 @@ class FieldFilter(object):
         raise NotImplementedError
 
     def check_match(self, json_data: dict) -> bool:
+        """
+        Check if an edit event matches this filter
+
+        :param json_data: Edit event to check
+
+        :return: True if match
+        :rtype: bool
+        """
         return self._handler(json_data)
 
     def run_on_match(self, json_data: dict):
+        """
+        Check if edit event matches this filter, and run on_match handler if it does match.
+
+        :param json_data: Edit event to check
+        """
         if self._on_match is not None:
             self._on_match(json_data)
 
@@ -54,6 +72,9 @@ class FilterCollection(FieldFilter):
     of the filters matches
     """
     def __init__(self, *filters):
+        """
+        :param filters: one or more filter instances to use
+        """
         super(FilterCollection, self).__init__()
         self._filters = filters
         self._match_type = MatchType.ALL
@@ -63,6 +84,8 @@ class FilterCollection(FieldFilter):
         Set match type for this collection. If MatchType.ALL, then this collection will
         match only if all contained filters match. If MatchType.ANY, then this collection will
         match if one of the contained filters match.
+
+        :match_type: Match type, must be one of the values defined in wikichangewatcher.MatchType
         """
         self._match_type = match_type
         return self
@@ -88,10 +111,37 @@ def _ipv4_field_tostr(stringval: str) -> int:
 
 class IpV4Filter(FieldFilter):
     """
-    FieldWatcher implementation to watch for "user" fields that contain IPv4 addresses
+    FieldFilter implementation to watch for "user" fields that contain IPv4 addresses
     in the specified ranges
     """
     def __init__(self, ip_addr_pattern="*.*.*.*"):
+        """
+        IPv4 address pattern to use. Each of the 4 dot-seperated fields may be one of
+        the following:
+
+        - A decimal integer from 0 through 255, representing exactly and only the written value.
+        - A range of values in the form "0-255" (two decimal integers, both between 0 and 255, separated
+          by a dash), representing any value between and including the two written values.
+        - An asterisk '\*', representing any value from 0 through 255.
+
+        These can be used in combination. For example:
+
+        - "\*.\*.\*.\*" matches any valid IPv4 address
+
+        - "192.88.99.77" matches only one specific IPv4 address, 192.88.99.77
+
+        - "192.88.0-9.\*" matches 2,550 specific IPv4 addresses:
+
+           192.88.0.0
+
+           192.88.0.1
+
+           192.88.0.2
+
+           ...
+
+           And so on, all the way up to 192.88.9.255
+        """
         super(IpV4Filter, self).__init__()
         self.ip_addr_pattern = []
 
@@ -160,10 +210,37 @@ def _ipv6_field_tostr(stringval: str) -> int:
 
 class IpV6Filter(FieldFilter):
     """
-    FieldWatcher implementation to watch for "user" fields that contain IPv6 addresses
+    FieldFilter implementation to watch for "user" fields that contain IPv6 addresses
     in the specified ranges
     """
     def __init__(self, ip_addr_pattern="*:*:*:*:*:*:*:*"):
+        """
+        IPv6 address pattern to use. Each of the 8 dot-seperated fields may be one of
+        the following:
+
+        - A hexadecimal integer from 0 through ffff, representing exactly and only the written value.
+        - A range of values in the form "0-255" (two hexadecimal integers, both between 0 and ffff, separated
+          by a dash), representing any value between and including the two written values.
+        - An asterisk '\*', representing any value from 0 through ffff.
+
+        These can be used in combination. For example:
+
+        - "\*:\*:\*:\*:\*:\*:\*:\*" matches any valid IPv6 address
+
+        - "00.11.22.33.44.55.66.77" matches only one specific IPv6 address, 00.11.22.33.44.55.66.77
+
+        - "00.11.22.33.44.55.0-9.\*" matches 655,350 specific IPv6 addresses:
+
+           00.11.22.33.44.55.0.0
+
+           00.11.22.33.44.55.0.1
+
+           00.11.22.33.44.55.0.2
+
+           ...
+
+           And so on, all the way up to 00.11.22.33.44.55.9.ffff
+        """
         super(IpV6Filter, self).__init__()
         self.ip_addr_pattern = []
 
@@ -345,6 +422,8 @@ class WikiChangeWatcher(object):
     def on_edit(self, on_edit_handler: Callable[[dict], None]) -> Self:
         """
         Sets handler to run whenever any edit event is received (before any filters are processed)
+
+        :param on_edit_handler: Handler to run on edit event
         """
         self._on_edit_handler = on_edit_handler
         return self
@@ -352,6 +431,8 @@ class WikiChangeWatcher(object):
     def add_filter(self, fltr: Type[FieldFilter]) -> Self:
         """
         Add a new filter to the list of active filters
+
+        :param fltr: filter instance to add
         """
         self._filters.append(fltr)
         return self
@@ -370,6 +451,9 @@ class WikiChangeWatcher(object):
     def is_running(self):
         """
         Returns true if WikiChangeWatcher thread is active
+
+        :return: True if thread is active
+        :rtype: bool
         """
         if self._thread is None:
             return False

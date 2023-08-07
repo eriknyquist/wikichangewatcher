@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wikichangewatcher &mdash; wikichangewatcher v0.2.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="wikichangewatcher" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            wikichangewatcher
+          </a>
+              <div class="version">
+                v0.2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">wikichangewatcher</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">wikichangewatcher</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">wikichangewatcher</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="wikichangewatcher">
+<h1><a class="toc-backref" href="#id1" role="doc-backlink">wikichangewatcher</a><a class="headerlink" href="#wikichangewatcher" title="Permalink to this heading"></a></h1>
+</section>
+<section id="wikichangewatcher-0-2-0">
+<h1><a class="toc-backref" href="#id2" role="doc-backlink">WikiChangeWatcher 0.2.0</a><a class="headerlink" href="#wikichangewatcher-0-2-0" title="Permalink to this heading"></a></h1>
+<img alt="https://raw.githubusercontent.com/eriknyquist/wikichangewatcher/5f8e204db0af39d0a0ed00e5884a38544e11321a/images/wikiwatcher_github_banner.png" src="https://raw.githubusercontent.com/eriknyquist/wikichangewatcher/5f8e204db0af39d0a0ed00e5884a38544e11321a/images/wikiwatcher_github_banner.png" />
+<nav class="contents" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#wikichangewatcher" id="id1">wikichangewatcher</a></p></li>
+<li><p><a class="reference internal" href="#wikichangewatcher-0-2-0" id="id2">WikiChangeWatcher 0.2.0</a></p></li>
+<li><p><a class="reference internal" href="#introduction" id="id3">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#install" id="id4">Install</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id5">Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#monitoring-anonymous-page-edits-made-from-specific-ip-address-ranges" id="id6">Monitoring “anonymous” page edits made from specific IP address ranges</a></p></li>
+<li><p><a class="reference internal" href="#monitoring-page-edits-made-by-usernames-that-match-a-regular-expression" id="id7">Monitoring page edits made by usernames that match a regular expression</a></p></li>
+<li><p><a class="reference internal" href="#monitoring-page-edit-events-based-on-regular-expression-match-on-arbitary-json-fields" id="id8">Monitoring page edit events based on regular expression match on arbitary JSON fields</a></p></li>
+<li><p><a class="reference internal" href="#combining-multiple-filter-classes-with-the-filtercollection-class" id="id9">Combining multiple filter classes with the <code class="docutils literal notranslate"><span class="pre">FilterCollection</span></code> class</a></p></li>
+<li><p><a class="reference internal" href="#combining-nesting-multiple-filtercollection-classes" id="id10">Combining/nesting multiple <code class="docutils literal notranslate"><span class="pre">FilterCollection</span></code> classes</a></p></li>
+<li><p><a class="reference internal" href="#monitoring-anonymous-edits-made-from-ip-address-ranges-owned-by-us-government-depts-agencies" id="id11">Monitoring “anonymous” edits made from IP address ranges owned by US government depts./agencies</a></p></li>
+<li><p><a class="reference internal" href="#calculating-a-running-average-of-page-edits-per-minute-for-all-of-wikipedia" id="id12">Calculating a running average of page-edits-per-minute for all of wikipedia</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#indices-and-tables" id="id13">Indices and tables</a></p></li>
+</ul>
+</nav>
+</section>
+<section id="introduction">
+<h1><a class="toc-backref" href="#id3" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h1>
+<p>Wikipedia provides an <a class="reference external" href="https://en.wikipedia.org/wiki/Server-sent_events">SSE Stream</a>  of
+all edits made to any page across Wikipedia, which allows you to watch all edits made to all wikipedia
+pages in real time.</p>
+<p><code class="docutils literal notranslate"><span class="pre">WikiChangeWatcher</span></code> is an SSE client that watches the SSE stream of wikipedia page edits,
+with some filtering features that allow you to watch for page edit events with specific attributes
+(e.g. <a class="reference external" href="https://en.wikipedia.org/wiki/Wikipedia:IP_edits_are_not_anonymous">“anonymous”</a>
+edits with IP addresses in specific ranges, or edits made to a specific page, or edits made by a wikipedia
+user whose username matches a specific regular expression).</p>
+<p>This package is inspired by <a class="reference external" href="https://www.tomscott.com/wikiparliament/">Tom Scott’s WikiParliament project</a>.</p>
+</section>
+<section id="install">
+<h1><a class="toc-backref" href="#id4" role="doc-backlink">Install</a><a class="headerlink" href="#install" title="Permalink to this heading"></a></h1>
+<p>Install using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">wikichangewatcher</span>
+</pre></div>
+</div>
+</section>
+<section id="examples">
+<h1><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h1>
+<p>Some example scripts illustrating how to use <code class="docutils literal notranslate"><span class="pre">WikiChangeWatcher</span></code> are presented in
+the following sections.</p>
+<section id="monitoring-anonymous-page-edits-made-from-specific-ip-address-ranges">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Monitoring “anonymous” page edits made from specific IP address ranges</a><a class="headerlink" href="#monitoring-anonymous-page-edits-made-from-specific-ip-address-ranges" title="Permalink to this heading"></a></h2>
+<p>The following example code watches for edits made by 3 specific IPv4 address ranges.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example script showing how to use WikiChangeWatcher to watch for &quot;anonymous&quot; edits to any</span>
+<span class="c1"># wikipedia page from specific IP address ranges</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">wikichangewatcher</span> <span class="kn">import</span> <span class="n">WikiChangeWatcher</span><span class="p">,</span> <span class="n">IpV4Filter</span><span class="p">,</span> <span class="n">IpV6Filter</span>
+
+<span class="c1"># Callback function to run whenever an event matching our IPv4 address pattern is seen</span>
+<span class="k">def</span> <span class="nf">match_handler</span><span class="p">(</span><span class="n">json_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    json_data is a JSON-encoded event from the WikiMedia &quot;recent changes&quot; event stream,</span>
+<span class="sd">    as described here: https://www.mediawiki.org/wiki/Manual:RCFeed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{user}</span><span class="s2"> edited </span><span class="si">{title_url}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">json_data</span><span class="p">))</span>
+
+<span class="c1"># Watch for anonymous edits from some specific IP address ranges</span>
+<span class="n">wc</span> <span class="o">=</span> <span class="n">WikiChangeWatcher</span><span class="p">(</span><span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.60.38.225-230&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">),</span>
+                       <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2601:205:4882:810:5D1D:BC41:61BB:0-ffff&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">))</span>
+
+<span class="c1"># Wildcard &#39;*&#39; character can be used in place of a IPv4 or IP46 address field, to ignore that field entirely.</span>
+<span class="c1"># IPV6 filter with some fields ignored: IpV6Filter(&quot;*:*:*:810:5D1D:BC41:*:0-ffff&quot;)</span>
+<span class="c1"># IPV6 filter with some fields ignored: IpV4Filter(&quot;192.*.*.225-230&quot;)</span>
+
+<span class="n">wc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Watch for page edits forever until KeyboardInterrupt</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="monitoring-page-edits-made-by-usernames-that-match-a-regular-expression">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Monitoring page edits made by usernames that match a regular expression</a><a class="headerlink" href="#monitoring-page-edits-made-by-usernames-that-match-a-regular-expression" title="Permalink to this heading"></a></h2>
+<p>The following example code watches for edits made by signed-in users with usernames
+that contain one or more strings matching a regular expression.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example script showing how to use WikiChangeWatcher to watch for NON-&quot;anonymous&quot; edits to any</span>
+<span class="c1"># wikipedia page, by usernames that contain a string matching a provided regular expression</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">wikichangewatcher</span> <span class="kn">import</span> <span class="n">WikiChangeWatcher</span><span class="p">,</span> <span class="n">UsernameRegexSearchFilter</span>
+
+<span class="c1"># Callback function to run whenever an edit by a user with a username containing our regex is seen</span>
+<span class="k">def</span> <span class="nf">match_handler</span><span class="p">(</span><span class="n">json_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    json_data is a JSON-encoded event from the WikiMedia &quot;recent changes&quot; event stream,</span>
+<span class="sd">    as described here: https://www.mediawiki.org/wiki/Manual:RCFeed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{user}</span><span class="s2"> edited </span><span class="si">{title_url}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">json_data</span><span class="p">))</span>
+
+<span class="c1"># Watch for edits made by users with &quot;bot&quot; in their username</span>
+<span class="n">wc</span> <span class="o">=</span> <span class="n">WikiChangeWatcher</span><span class="p">(</span><span class="n">UsernameRegexSearchFilter</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[Bb]ot|BOT&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">))</span>
+
+<span class="n">wc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Watch for page edits forever until KeyboardInterrupt</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="monitoring-page-edit-events-based-on-regular-expression-match-on-arbitary-json-fields">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Monitoring page edit events based on regular expression match on arbitary JSON fields</a><a class="headerlink" href="#monitoring-page-edit-events-based-on-regular-expression-match-on-arbitary-json-fields" title="Permalink to this heading"></a></h2>
+<p>The following example code watches for any page edit events where the specified JSON
+field matches contains one or more matches of a regular expression (available
+JSON fields and their descriptions can be found <a class="reference external" href="https://www.mediawiki.org/wiki/Manual:RCFeed">here</a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example script showing how to use WikiChangeWatcher to filter page edit events</span>
+<span class="c1"># by a regular expression match in an arbitrary named field from the JSON event</span>
+<span class="c1"># provided by the SSE stream of wikipedia page edits</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">wikichangewatcher</span> <span class="kn">import</span> <span class="n">WikiChangeWatcher</span><span class="p">,</span> <span class="n">FieldRegexSearchFilter</span>
+
+<span class="c1"># Callback function to run whenever an edit is made to a page that has a regex match in the page URL</span>
+<span class="k">def</span> <span class="nf">match_handler</span><span class="p">(</span><span class="n">json_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    json_data is a JSON-encoded event from the WikiMedia &quot;recent changes&quot; event stream,</span>
+<span class="sd">    as described here: https://www.mediawiki.org/wiki/Manual:RCFeed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{user}</span><span class="s2"> edited </span><span class="si">{title_url}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">json_data</span><span class="p">))</span>
+
+<span class="c1"># Watch for edits made to any page that has the word &quot;publish&quot; in the page URL</span>
+<span class="c1"># (&quot;title_url&quot; field in the JSON object)</span>
+<span class="n">wc</span> <span class="o">=</span> <span class="n">WikiChangeWatcher</span><span class="p">(</span><span class="n">FieldRegexSearchFilter</span><span class="p">(</span><span class="s2">&quot;title_url&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;[Pp]ublish&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">))</span>
+
+<span class="n">wc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Watch for page edits forever until KeyboardInterrupt</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="combining-multiple-filter-classes-with-the-filtercollection-class">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Combining multiple filter classes with the <code class="docutils literal notranslate"><span class="pre">FilterCollection</span></code> class</a><a class="headerlink" href="#combining-multiple-filter-classes-with-the-filtercollection-class" title="Permalink to this heading"></a></h2>
+<p>The following example watches for anonymous page edits to a specific page URL.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example script showing how to use WikiChangeWatcher to watch for &quot;anonymous&quot; edits to</span>
+<span class="c1"># a specific wikipedia page</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">wikichangewatcher</span> <span class="kn">import</span> <span class="n">WikiChangeWatcher</span><span class="p">,</span> <span class="n">FilterCollection</span><span class="p">,</span> <span class="n">IpV4Filter</span><span class="p">,</span> <span class="n">PageUrlFilter</span>
+
+<span class="c1"># Callback function to run whenever an event matching our filters is seen</span>
+<span class="k">def</span> <span class="nf">match_handler</span><span class="p">(</span><span class="n">json_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    json_data is a JSON-encoded event from the WikiMedia &quot;recent changes&quot; event stream,</span>
+<span class="sd">    as described here: https://www.mediawiki.org/wiki/Manual:RCFeed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{user}</span><span class="s2"> edited </span><span class="si">{title_url}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">json_data</span><span class="p">))</span>
+
+<span class="c1"># Default match type is is MatchType.ALL</span>
+<span class="n">filters</span> <span class="o">=</span> <span class="n">FilterCollection</span><span class="p">(</span>
+    <span class="c1"># Filter for any edits to a specific wikipedia page URL</span>
+    <span class="n">PageUrlFilter</span><span class="p">(</span><span class="s2">&quot;https://es.wikipedia.org/wiki/Reclus_(La_Rioja)&quot;</span><span class="p">),</span>
+
+    <span class="c1"># Filter for any IP address (any anonymous edit)</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;*.*.*.*&quot;</span><span class="p">),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">)</span>
+
+
+<span class="n">wc</span> <span class="o">=</span> <span class="n">WikiChangeWatcher</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+
+<span class="n">wc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Watch for page edits forever until KeyboardInterrupt</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="combining-nesting-multiple-filtercollection-classes">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Combining/nesting multiple <code class="docutils literal notranslate"><span class="pre">FilterCollection</span></code> classes</a><a class="headerlink" href="#combining-nesting-multiple-filtercollection-classes" title="Permalink to this heading"></a></h2>
+<p>The following example watches for page edits to several specific page URLs made by
+user with the word “bot” in their username.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example script showing how to use WikiChangeWatcher to watch for edit to specific</span>
+<span class="c1"># wikipedia page URLs by users with the word &quot;bot&quot; in their name</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">wikichangewatcher</span> <span class="kn">import</span> <span class="n">WikiChangeWatcher</span><span class="p">,</span> <span class="n">FilterCollection</span><span class="p">,</span> <span class="n">UsernameRegexSearchFilter</span><span class="p">,</span> <span class="n">PageUrlFilter</span><span class="p">,</span> <span class="n">MatchType</span>
+
+<span class="c1"># Callback function to run whenever an event matching our filters is seen</span>
+<span class="k">def</span> <span class="nf">match_handler</span><span class="p">(</span><span class="n">json_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    json_data is a JSON-encoded event from the WikiMedia &quot;recent changes&quot; event stream,</span>
+<span class="sd">    as described here: https://www.mediawiki.org/wiki/Manual:RCFeed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{user}</span><span class="s2"> edited </span><span class="si">{title_url}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">json_data</span><span class="p">))</span>
+
+<span class="c1"># Make a filter collection that matches any one of several wikipedia pages</span>
+<span class="n">page_urls</span> <span class="o">=</span> <span class="n">FilterCollection</span><span class="p">(</span>
+    <span class="c1"># Filters for any edits to multiple specific wikipedia page URLs</span>
+    <span class="n">PageUrlFilter</span><span class="p">(</span><span class="s2">&quot;https://en.wikipedia.org/wiki/Python_(programming_language)&quot;</span><span class="p">),</span>
+    <span class="n">PageUrlFilter</span><span class="p">(</span><span class="s2">&quot;https://en.wikipedia.org/wiki/CPython&quot;</span><span class="p">),</span>
+    <span class="n">PageUrlFilter</span><span class="p">(</span><span class="s2">&quot;https://en.wikipedia.org/wiki/Server-sent_events&quot;</span><span class="p">),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">set_match_type</span><span class="p">(</span><span class="n">MatchType</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
+
+<span class="c1"># Make a filter collection that matches one of the page URLs, *and* a specific username regex</span>
+<span class="n">main_filter</span> <span class="o">=</span> <span class="n">FilterCollection</span><span class="p">(</span>
+    <span class="n">page_urls</span><span class="p">,</span>
+    <span class="n">UsernameRegexSearchFilter</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[Bb][Oo][Tt]&quot;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">set_match_type</span><span class="p">(</span><span class="n">MatchType</span><span class="o">.</span><span class="n">ALL</span><span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">)</span>
+
+<span class="n">wc</span> <span class="o">=</span> <span class="n">WikiChangeWatcher</span><span class="p">(</span><span class="n">main_filter</span><span class="p">)</span>
+
+<span class="n">wc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Watch for page edits forever until KeyboardInterrupt</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="monitoring-anonymous-edits-made-from-ip-address-ranges-owned-by-us-government-depts-agencies">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Monitoring “anonymous” edits made from IP address ranges owned by US government depts./agencies</a><a class="headerlink" href="#monitoring-anonymous-edits-made-from-ip-address-ranges-owned-by-us-government-depts-agencies" title="Permalink to this heading"></a></h2>
+<p>The following example watches for anonymous page edits to <em>any</em> wikipedia page,
+from IP address ranges that were found to be publicly listed as owned by various
+US government department and agencies (mostly California, some federal).</p>
+<p>If you want to look up some IP addresses owned by your local governments, or companies, it’s pretty easy,
+I just went to <code class="docutils literal notranslate"><span class="pre">https://ip-netblocks.whoisxmlapi.com/</span></code> and searched for “california department of”
+as the company name.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example script showing how to use WikiChangeWatcher to watch for &quot;anonymous&quot; edits to any</span>
+<span class="c1"># wikipedia page from IP address ranges that are publicly listed as being owned by various US government departments</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">wikichangewatcher</span> <span class="kn">import</span> <span class="n">WikiChangeWatcher</span><span class="p">,</span> <span class="n">FilterCollection</span><span class="p">,</span> <span class="n">IpV4Filter</span><span class="p">,</span> <span class="n">IpV6Filter</span><span class="p">,</span> <span class="n">MatchType</span>
+
+<span class="c1"># Callback function to run whenever an event matching one of our IPv4 address ranges is seen</span>
+<span class="k">def</span> <span class="nf">match_handler</span><span class="p">(</span><span class="n">json_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    json_data is a JSON-encoded event from the WikiMedia &quot;recent changes&quot; event stream,</span>
+<span class="sd">    as described here: https://www.mediawiki.org/wiki/Manual:RCFeed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{user}</span><span class="s2"> edited </span><span class="si">{title_url}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">json_data</span><span class="p">))</span>
+
+
+<span class="n">filter_collection</span> <span class="o">=</span> <span class="n">FilterCollection</span><span class="p">(</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;136.200.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range assigned to CA dept. of water resources</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;151.143.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range assigned to CA dept. of technology</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;160.88.0-255.0-255&quot;</span><span class="p">),</span>                                     <span class="c1"># IP4 range assigned to CA dept. of insurance</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.56.110.0-255&quot;</span><span class="p">),</span>                                       <span class="c1"># IP4 range #1 assigned to CA dept. of corrections</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;153.48.0-255.0-255&quot;</span><span class="p">),</span>                                     <span class="c1"># IP4 range #2 assigned to CA dept. of corrections</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;149.136.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range assigned to CA dept. of transportation</span>
+    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2602:814:5000-5fff:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">),</span>  <span class="c1"># IP6 range assigned CA dept. of transportation</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.251.92.0-255&quot;</span><span class="p">),</span>                                       <span class="c1"># IP4 range assigned to CA dept. of general services</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;159.145.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range assigned to CA dept. of consumer affairs</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;167.10.0-255.0-255&quot;</span><span class="p">),</span>                                     <span class="c1"># IP4 range assigned to CA dept. of justice</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.58.200-203.0-255&quot;</span><span class="p">),</span>                                   <span class="c1"># IP4 range assigned to Bureau of Justice Statistics in WA</span>
+    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2607:f330:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">)</span>     <span class="c1"># IP6 range assigned to the US dept. of justice in WA</span>
+<span class="p">)</span><span class="o">.</span><span class="n">set_match_type</span><span class="p">(</span><span class="n">MatchType</span><span class="o">.</span><span class="n">ALL</span><span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">)</span>
+
+<span class="n">wc</span> <span class="o">=</span> <span class="n">WikiChangeWatcher</span><span class="p">(</span><span class="n">filter_collection</span><span class="p">)</span>
+<span class="n">wc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Watch for page edits forever until KeyboardInterrupt</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="calculating-a-running-average-of-page-edits-per-minute-for-all-of-wikipedia">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Calculating a running average of page-edits-per-minute for all of wikipedia</a><a class="headerlink" href="#calculating-a-running-average-of-page-edits-per-minute-for-all-of-wikipedia" title="Permalink to this heading"></a></h2>
+<p>The following example watches for any edit to any wikipedia page, and updates a
+running average of the rate of page edits per minute, which is printed to stdout
+once every 5 seconds.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example script showing how to use WikiChangeWatcher to watch for &quot;anonymous&quot; edits to any</span>
+<span class="c1"># wikipedia page from specific IP address ranges</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">statistics</span>
+<span class="kn">import</span> <span class="nn">queue</span>
+
+<span class="kn">from</span> <span class="nn">wikichangewatcher</span> <span class="kn">import</span> <span class="n">WikiChangeWatcher</span>
+
+
+<span class="c1"># Max. number of samples in the averaging window</span>
+<span class="n">MAX_WINDOW_LEN</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="c1"># Interval between new samples for the averaging window, in seconds</span>
+<span class="n">INTERVAL_SECS</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<span class="k">class</span> <span class="nc">EditRateCounter</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tracks total number of page edits per minute across all of wikipedia,</span>
+<span class="sd">    using a simple averaging window</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval_secs</span><span class="o">=</span><span class="n">INTERVAL_SECS</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edit_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interval_secs</span> <span class="o">=</span> <span class="n">interval_secs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Callback function to run whenever an edit event is seen</span>
+    <span class="k">def</span> <span class="nf">edit_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        json_data is a JSON-encoded event from the WikiMedia &quot;recent changes&quot; event stream,</span>
+<span class="sd">        as described here: https://www.mediawiki.org/wiki/Manual:RCFeed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edit_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Add an edit rate sample to the averaging window, and return the new average</span>
+    <span class="k">def</span> <span class="nf">_add_to_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edits_per_min</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edits_per_min</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_WINDOW_LEN</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_secs</span><span class="p">:</span>
+            <span class="c1"># interval is up, calculate new rate and put it on the queue</span>
+            <span class="n">edits_per_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_edit_count</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">60.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_secs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_add_to_window</span><span class="p">(</span><span class="n">edits_per_min</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_count</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_edit_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">ret</span>
+
+<span class="c1"># Create rate counter class to monitor page edit rate over time</span>
+<span class="n">ratecounter</span> <span class="o">=</span> <span class="n">EditRateCounter</span><span class="p">()</span>
+
+<span class="c1"># Create a watcher with no filters-- we want to see every single edit</span>
+<span class="n">wc</span> <span class="o">=</span> <span class="n">WikiChangeWatcher</span><span class="p">()</span><span class="o">.</span><span class="n">on_edit</span><span class="p">(</span><span class="n">ratecounter</span><span class="o">.</span><span class="n">edit_handler</span><span class="p">)</span>
+
+<span class="n">wc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Watch for page edits forever until KeyboardInterrupt</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">ratecounter</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">new_rate</span> <span class="o">=</span> <span class="n">ratecounter</span><span class="o">.</span><span class="n">get_rate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">new_rate</span><span class="p">:</span>
+            <span class="n">rate</span><span class="p">,</span> <span class="n">since_last</span> <span class="o">=</span> <span class="n">new_rate</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rate</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> avg. page edits per min. (</span><span class="si">{</span><span class="n">since_last</span><span class="si">}</span><span class="s2"> in the last </span><span class="si">{</span><span class="n">INTERVAL_SECS</span><span class="si">}</span><span class="s2"> secs)&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">wikichangewatcher</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wikichangewatcher.html">wikichangewatcher package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1><a class="toc-backref" href="#id13" role="doc-backlink">Indices and tables</a><a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-right" title="wikichangewatcher" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Erik K. Nyquist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
