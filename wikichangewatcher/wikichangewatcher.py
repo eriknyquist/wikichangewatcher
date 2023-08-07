@@ -57,6 +57,52 @@ class FieldFilter(object):
         if self._on_match is not None:
             self._on_match(json_data)
 
+    def _combine(self, this, other, match_type):
+        self_collection = isinstance(this, FilterCollection)
+        other_collection = isinstance(other, FilterCollection)
+        self_filter = isinstance(this, FieldFilter) and (not self_collection)
+        other_filter = isinstance(other, FieldFilter) and (not other_collection)
+        self_valid = self_filter or self_collection
+        other_valid = other_filter or other_collection
+
+        if (not self_valid) or (not other_valid):
+            raise ValueError(f"Cannot combine {self.__class__.__name__} and {other.__class__.__name__} objects")
+
+        if self_filter and other_filter:
+            # Both operands are a single filter
+            return FilterCollection(this, other).set_match_type(match_type)
+
+        elif self_collection and other_collection:
+            # Both operands are a filter collection
+            if this._match_type == match_type:
+                if other._match_type == match_type:
+                    filters = this._filters + other._filters
+                    return FilterCollection(*filters).set_match_type(match_type)
+                else:
+                    this._filters.append(other)
+                    return this
+
+        else:
+            # one operand is a filter and the other is a collection
+            if self_filter:
+                filter_obj = this
+                collection_obj = other
+            else:
+                filter_obj = other
+                collection_obj = this
+
+            if collection_obj._match_type == match_type:
+                collection_obj._filters.append(filter_obj)
+                return collection_obj
+            else:
+                return FilterCollection(collection_obj, filter_obj).set_match_type(match_type)
+
+    def __or__(self, other):
+        return self._combine(self, other, MatchType.ANY)
+
+    def __and__(self, other):
+        return self._combine(self, other, MatchType.ALL)
+
 
 class MatchType(object):
     """
@@ -76,7 +122,7 @@ class FilterCollection(FieldFilter):
         :param filters: one or more filter instances to use
         """
         super(FilterCollection, self).__init__()
-        self._filters = filters
+        self._filters = list(filters)
         self._match_type = MatchType.ALL
 
     def set_match_type(self, match_type: int) -> Self:
@@ -100,6 +146,15 @@ class FilterCollection(FieldFilter):
             match = any(f.check_match(json_data) for f in self._filters)
 
         return match
+
+    def __str__(self):
+        params = ','.join(f"{f}" for f in self._filters)
+        mtype = "ALL" if self._match_type == MatchType.ALL else "ANY"
+        return f"{self.__class__.__name__}({mtype}, {params})"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 def _ipv4_field_tostr(stringval: str) -> int:
     intval = int(stringval)
@@ -143,6 +198,7 @@ class IpV4Filter(FieldFilter):
            And so on, all the way up to 192.88.9.255
         """
         super(IpV4Filter, self).__init__()
+        self.orig_pattern = ip_addr_pattern
         self.ip_addr_pattern = []
 
         for x in ip_addr_pattern.split("."):
@@ -169,6 +225,12 @@ class IpV4Filter(FieldFilter):
 
         if len(self.ip_addr_pattern) != 4:
             raise ValueError(f"Invalid number of fields ({len(self.ip_addr_pattern)}) for IP address pattern (expected 4)")
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(\"{self.orig_pattern}\")"
+
+    def __repr__(self):
+        return self.__str__()
 
     def _handler(self, json_data: dict) -> bool:
         if "user" not in json_data:
@@ -242,6 +304,7 @@ class IpV6Filter(FieldFilter):
            And so on, all the way up to 00.11.22.33.44.55.9.ffff
         """
         super(IpV6Filter, self).__init__()
+        self.orig_pattern = ip_addr_pattern
         self.ip_addr_pattern = []
 
         for x in ip_addr_pattern.split(":"):
@@ -268,6 +331,12 @@ class IpV6Filter(FieldFilter):
 
         if len(self.ip_addr_pattern) != 8:
             raise ValueError(f"Invalid number of fields ({len(self.ip_addr_pattern)}) for IP address pattern (expected 8)")
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(\"{self.orig_pattern}\")"
+
+    def __repr__(self):
+        return self.__str__()
 
     def _handler(self, json_data: dict) -> bool:
         if "user" not in json_data:
@@ -308,6 +377,12 @@ class FieldStringFilter(FieldFilter):
         self.fieldname = fieldname
         self.value = value
 
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.fieldname}, \"{self.value}\")"
+
+    def __repr__(self):
+        return self.__str__()
+
     def _handler(self, json_data: dict) -> bool:
         if self.fieldname not in json_data:
             return False
@@ -323,6 +398,13 @@ class FieldRegexMatchFilter(FieldFilter):
         super(FieldRegexMatchFilter, self).__init__()
         self.fieldname = fieldname
         self.regex = re.compile(regex)
+        self.regex_string = regex
+
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.fieldname}, \"{self.regex_string}\")"
+
+    def __repr__(self):
+        return self.__str__()
 
     def _handler(self, json_data: dict) -> bool:
         if self.fieldname not in json_data:
@@ -340,6 +422,13 @@ class FieldRegexSearchFilter(FieldFilter):
         super(FieldRegexSearchFilter, self).__init__()
         self.fieldname = fieldname
         self.regex = re.compile(regex)
+        self.regex_string = regex
+
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.fieldname}, \"{self.regex_string}\")"
+
+    def __repr__(self):
+        return self.__str__()
 
     def _handler(self, json_data: dict) -> bool:
         if self.fieldname not in json_data:
@@ -355,6 +444,12 @@ class PageUrlFilter(FieldStringFilter):
     def __init__(self, page_url: str):
         super(PageUrlFilter, self).__init__("title_url", page_url)
 
+    def __str__(self):
+        return f"{self.__class__.__name__}(\"{self.value}\")"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class PageUrlRegexMatchFilter(FieldRegexMatchFilter):
     """
@@ -362,6 +457,12 @@ class PageUrlRegexMatchFilter(FieldRegexMatchFilter):
     """
     def __init__(self, regex: str):
         super(UsernameRegexMatchFilter, self).__init__("title_url", regex)
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(\"{self.regex_string}\")"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class PageUrlRegexSearchFilter(FieldRegexSearchFilter):
@@ -372,6 +473,12 @@ class PageUrlRegexSearchFilter(FieldRegexSearchFilter):
     def __init__(self, regex: str):
         super(UsernameRegexSearchFilter, self).__init__("title_url", regex)
 
+    def __str__(self):
+        return f"{self.__class__.__name__}(\"{self.regex_string}\")"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class UsernameFilter(FieldStringFilter):
     """
@@ -379,6 +486,12 @@ class UsernameFilter(FieldStringFilter):
     """
     def __init__(self, string: str):
         super(UsernameFilter, self).__init__("user", string)
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(\"{self.value}\")"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class UsernameRegexMatchFilter(FieldRegexMatchFilter):
@@ -388,6 +501,12 @@ class UsernameRegexMatchFilter(FieldRegexMatchFilter):
     def __init__(self, regex: str):
         super(UsernameRegexMatchFilter, self).__init__("user", regex)
 
+    def __str__(self):
+        return f"{self.__class__.__name__}(\"{self.regex_string}\")"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class UsernameRegexSearchFilter(FieldRegexSearchFilter):
     """
@@ -396,6 +515,12 @@ class UsernameRegexSearchFilter(FieldRegexSearchFilter):
     """
     def __init__(self, regex: str):
         super(UsernameRegexSearchFilter, self).__init__("user", regex)
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(\"{self.regex_string}\")"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class WikiChangeWatcher(object):
