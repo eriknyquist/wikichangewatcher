@@ -535,6 +535,7 @@ class WikiChangeWatcher(object):
         self._session = None
         self._client = None
         self._on_edit_handler = None
+        self._ignore_log_events = True
         self._retry_count = 0
         self._max_retries = 10
         self._connect()
@@ -551,6 +552,15 @@ class WikiChangeWatcher(object):
         :param on_edit_handler: Handler to run on edit event
         """
         self._on_edit_handler = on_edit_handler
+        return self
+
+    def set_ignore_log_events(self, ignore: bool) -> Self:
+        """
+        Set whether log events will be ignored (default if unset is True).
+
+        :param ignore: True to ignore log events, False to ignore nothing.
+        """
+        self._ignore_log_events = ignore
         return self
 
     def add_filter(self, fltr: Type[FieldFilter]) -> Self:
@@ -633,6 +643,15 @@ class WikiChangeWatcher(object):
                     change = json.loads(event.data)
                 except ValueError:
                     continue
+
+                for key in ["namespace", "user", "title_url"]:
+                    if key not in change:
+                        continue
+
+                if self._ignore_log_events:
+                    if change["namespace"] == -1:
+                        logger.debug("ignoring log event")
+                        continue
 
                 if self._on_edit_handler:
                     self._on_edit_handler(change)
