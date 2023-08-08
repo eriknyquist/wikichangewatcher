@@ -4,14 +4,15 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>wikichangewatcher package &mdash; wikichangewatcher v0.2.1 documentation</title>
+  <title>wikichangewatcher package &mdash; wikichangewatcher v0.2.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -33,7 +34,7 @@
             wikichangewatcher
           </a>
               <div class="version">
-                v0.2.1
+                v0.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -439,6 +440,17 @@ applies all provided FieldFilter instances to each received event.</p>
 <dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.WikiChangeWatcher.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#WikiChangeWatcher.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.run" title="Permalink to this definition"></a></dt>
 <dd><p>Start WikiChangeWatcher running in a separate thread</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.WikiChangeWatcher.set_ignore_log_events">
+<span class="sig-name descname"><span class="pre">set_ignore_log_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ignore</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#WikiChangeWatcher.set_ignore_log_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.set_ignore_log_events" title="Permalink to this definition"></a></dt>
+<dd><p>Set whether log events will be ignored (default if unset is True).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ignore</strong> – True to ignore log events, False to ignore nothing.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

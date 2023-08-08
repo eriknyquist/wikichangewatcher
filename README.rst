@@ -1,4 +1,4 @@
-WikiChangeWatcher 0.2.1
+WikiChangeWatcher 0.2.2
 =======================
 
 .. image:: https://raw.githubusercontent.com/eriknyquist/wikichangewatcher/5f8e204db0af39d0a0ed00e5884a38544e11321a/images/wikiwatcher_github_banner.png
