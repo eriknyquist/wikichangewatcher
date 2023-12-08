@@ -644,9 +644,14 @@ class WikiChangeWatcher(object):
                 except ValueError:
                     continue
 
+                missing_keys = False
                 for key in ["namespace", "user", "title_url"]:
                     if key not in change:
-                        continue
+                        missing_keys = True
+                        break
+
+                if missing_keys:
+                    continue
 
                 if self._ignore_log_events:
                     if change["namespace"] == -1:
