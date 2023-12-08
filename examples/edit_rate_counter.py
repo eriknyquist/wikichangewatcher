@@ -1,18 +1,19 @@
-# Example script showing how to use WikiChangeWatcher to watch for "anonymous" edits to any
-# wikipedia page from specific IP address ranges
+# Example script showing how to use WikiChangeWatcher to plot the average number
+# of wikipedia page edits over time
 
 import time
 import statistics
 import queue
+from datetime import datetime
 
 from wikichangewatcher import WikiChangeWatcher
-
+import matplotlib.pyplot as plt
 
 # Max. number of samples in the averaging window
-MAX_WINDOW_LEN = 6
+MAX_WINDOW_LEN = 10
 
 # Interval between new samples for the averaging window, in seconds
-INTERVAL_SECS = 5
+INTERVAL_SECS = 10
 
 
 class EditRateCounter():
@@ -50,7 +51,7 @@ class EditRateCounter():
         if (time.time() - self._start_time) >= self._interval_secs:
             # interval is up, calculate new rate and put it on the queue
             edits_per_min = float(self._edit_count) * (60.0 / self._interval_secs)
-            self._queue.put((self._add_to_window(edits_per_min), self._edit_count))
+            self._queue.put((time.time(), self._add_to_window(edits_per_min), edits_per_min, self._edit_count))
             self._edit_count = 0
             self._start_time = time.time()
 
@@ -73,13 +74,29 @@ wc = WikiChangeWatcher().on_edit(ratecounter.edit_handler)
 
 wc.run()
 
+timestamps = []
+avg_rates = []
+raw_rates = []
+
 # Watch for page edits forever until KeyboardInterrupt
 try:
     while wc.is_running():
         ratecounter.run()
         new_rate = ratecounter.get_rate()
         if new_rate:
-            rate, since_last = new_rate
-            print(f"{rate:.2f} avg. page edits per min. ({since_last} in the last {INTERVAL_SECS} secs)")
+            ts, avg_rate, raw_rate, since_last = new_rate
+            timestamps.append(datetime.fromtimestamp(ts))
+            avg_rates.append(avg_rate)
+            raw_rates.append(raw_rate)
+            print(f"edits_per_min_avg={avg_rate:.2f} edits_per_min_raw={raw_rate:.2f} edits_since_last={since_last}")
 except KeyboardInterrupt:
     wc.stop()
+
+    # Make plot
+    plt.title("Number of Wikipedia page edits per minute vs. UTC time")
+    plt.plot(timestamps, raw_rates, label="Raw page edit rate", linestyle='--')
+    plt.plot(timestamps, avg_rates, label="Avg. page edit rate")
+    plt.ylabel("Page edits per minute")
+    plt.xlabel("UTC time")
+    plt.legend()
+    plt.show()
