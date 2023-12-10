@@ -4,15 +4,17 @@ import argparse
 
 from wikichangewatcher import (
     WikiChangeWatcher, FilterCollection, IpV4Filter, IpV6Filter,
-    FieldRegexSearchFilter, MatchType
+    FieldRegexSearchFilter, MatchType, __version__
 )
 
-DESCRIPTION="""
+VERSION = "1.0.0"
+
+DESCRIPTION = """
 Real-time monitoring of global Wikipedia page edits, with flexible filtering
 features.
 """
 
-EPILOG="""
+EPILOG = """
 NOTE: if run without arguments, then all anonymous edits (any IPv4 or IPv6
 address) will be shown.
 
@@ -35,7 +37,7 @@ Show only edits made by usernames that contain the word "Bot" or "bot":
     wikiwatch -f user "[Bb]ot"\n
 """
 
-def main():
+def _main():
     parser = argparse.ArgumentParser(description=DESCRIPTION, epilog=EPILOG,
                                      formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=80))
 
@@ -60,7 +62,12 @@ def main():
                         'https://www.mediawiki.org/wiki/Manual:RCFeed. Format tokens must be in the form '
                         '"{field_name}", where "field_name" is the name of any field from the JSON event. This option '
                         'can only be used once (Default: "%(default)s").'))
+    parser.add_argument('--version', action='store_true', default=False, help='Show version and exit.')
     args = parser.parse_args()
+
+    if args.version:
+        print(f"wikiwatch version {VERSION} (using wikichangewatcher-{__version__})")
+        return 0
 
     # Callback function to run whenever an event matching our filters is seen
     def match_handler(json_data):
@@ -104,7 +111,7 @@ def main():
             for field_name, value_regex in args.field:
                 filters.append(FieldRegexSearchFilter(field_name, value_regex))
 
-    print(filters)
+    print(f"Using filters: {filters}")
     collection = FilterCollection(*filters).set_match_type(MatchType.ANY).on_match(match_handler)
     wc = WikiChangeWatcher(collection)
     wc.run()
@@ -118,5 +125,8 @@ def main():
 
     return 0
 
+def main():
+    sys.exit(_main())
+
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

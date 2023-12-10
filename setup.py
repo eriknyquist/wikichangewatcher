@@ -23,6 +23,11 @@ setup(
     author_email='eknyquist@gmail.com',
     license='Apache 2.0',
     packages=['wikichangewatcher'],
+    entry_points={
+        'console_scripts': [
+            'wikiwatch=wikichangewatcher.cli:main'
+        ]
+    },
     install_requires=dependencies,
     include_package_data=True,
     zip_safe=False,
