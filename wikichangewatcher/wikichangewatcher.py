@@ -68,10 +68,6 @@ class FieldFilter(object):
         if (not self_valid) or (not other_valid):
             raise ValueError(f"Cannot combine {self.__class__.__name__} and {other.__class__.__name__} objects")
 
-        if self_filter and other_filter:
-            # Both operands are a single filter
-            return FilterCollection(this, other).set_match_type(match_type)
-
         elif self_collection and other_collection:
             # Both operands are a filter collection
             if this._match_type == match_type:
@@ -81,6 +77,10 @@ class FieldFilter(object):
                 else:
                     this._filters.append(other)
                     return this
+
+        if self_filter and other_filter:
+            # Both operands are a single filter
+            return FilterCollection(this, other).set_match_type(match_type)
 
         else:
             # one operand is a filter and the other is a collection
@@ -233,9 +233,6 @@ class IpV4Filter(FieldFilter):
         return self.__str__()
 
     def _handler(self, json_data: dict) -> bool:
-        if "user" not in json_data:
-            return False
-
         ipaddr = json_data["user"]
 
         try:
@@ -367,52 +364,6 @@ class IpV6Filter(FieldFilter):
 
         return True
 
-
-class FieldStringFilter(FieldFilter):
-    """
-    FieldFilter implementation to watch for a named field with a specific fixed string
-    """
-    def __init__(self, fieldname: str, value: str):
-        super(FieldStringFilter, self).__init__()
-        self.fieldname = fieldname
-        self.value = value
-
-    def __str__(self):
-        return f"{self.__class__.__name__}({self.fieldname}, \"{self.value}\")"
-
-    def __repr__(self):
-        return self.__str__()
-
-    def _handler(self, json_data: dict) -> bool:
-        if self.fieldname not in json_data:
-            return False
-
-        return json_data[self.fieldname] == self.value
-
-
-class FieldRegexMatchFilter(FieldFilter):
-    """
-    FieldFilter implementation to watch for a named field that matches a provided regular expression
-    """
-    def __init__(self, fieldname: str, regex: str):
-        super(FieldRegexMatchFilter, self).__init__()
-        self.fieldname = fieldname
-        self.regex = re.compile(regex)
-        self.regex_string = regex
-
-    def __str__(self):
-        return f"{self.__class__.__name__}({self.fieldname}, \"{self.regex_string}\")"
-
-    def __repr__(self):
-        return self.__str__()
-
-    def _handler(self, json_data: dict) -> bool:
-        if self.fieldname not in json_data:
-            return False
-
-        return bool(self.regex.match(json_data[self.fieldname]))
-
-
 class FieldRegexSearchFilter(FieldFilter):
     """
     FieldFilter implementation to watch for a named field that contains one or more instances of
@@ -437,69 +388,13 @@ class FieldRegexSearchFilter(FieldFilter):
         return bool(self.regex.search(json_data[self.fieldname]))
 
 
-class PageUrlFilter(FieldStringFilter):
-    """
-    FieldString Filter implementation to watch for a specific page URL
-    """
-    def __init__(self, page_url: str):
-        super(PageUrlFilter, self).__init__("title_url", page_url)
-
-    def __str__(self):
-        return f"{self.__class__.__name__}(\"{self.value}\")"
-
-    def __repr__(self):
-        return self.__str__()
-
-
-class PageUrlRegexMatchFilter(FieldRegexMatchFilter):
-    """
-    FieldRegexMatchFilter implementation to watch for a "title_url" field that matches a provided regular expression
-    """
-    def __init__(self, regex: str):
-        super(UsernameRegexMatchFilter, self).__init__("title_url", regex)
-
-    def __str__(self):
-        return f"{self.__class__.__name__}(\"{self.regex_string}\")"
-
-    def __repr__(self):
-        return self.__str__()
-
-
 class PageUrlRegexSearchFilter(FieldRegexSearchFilter):
     """
     FieldRegexSearchFilter implementation to watch for a "title_url" field that contains one or more matches of
     a provided regular expression
     """
     def __init__(self, regex: str):
-        super(UsernameRegexSearchFilter, self).__init__("title_url", regex)
-
-    def __str__(self):
-        return f"{self.__class__.__name__}(\"{self.regex_string}\")"
-
-    def __repr__(self):
-        return self.__str__()
-
-
-class UsernameFilter(FieldStringFilter):
-    """
-    FieldStringFilter implementation to watch for a "user" field with a specific fixed string
-    """
-    def __init__(self, string: str):
-        super(UsernameFilter, self).__init__("user", string)
-
-    def __str__(self):
-        return f"{self.__class__.__name__}(\"{self.value}\")"
-
-    def __repr__(self):
-        return self.__str__()
-
-
-class UsernameRegexMatchFilter(FieldRegexMatchFilter):
-    """
-    FieldRegexMatchFilter implementation to watch for a "user" field that matches a provided regular expression
-    """
-    def __init__(self, regex: str):
-        super(UsernameRegexMatchFilter, self).__init__("user", regex)
+        super(PageUrlRegexSearchFilter, self).__init__("title_url", regex)
 
     def __str__(self):
         return f"{self.__class__.__name__}(\"{self.regex_string}\")"

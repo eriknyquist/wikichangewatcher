@@ -1,11 +1,28 @@
 import os
+import unittest
+
 from setuptools import setup
+from distutils.core import Command
 
 from wikichangewatcher import __version__
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 README = os.path.join(HERE, "README.rst")
 REQFILE = os.path.join(HERE, 'requirements.txt')
+
+class RunWikiChangeWatcherTests(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        suite = unittest.TestLoader().discover("tests")
+        t = unittest.TextTestRunner(verbosity = 2)
+        t.run(suite)
 
 with open(README, 'r') as f:
     long_description = f.read()
@@ -23,6 +40,7 @@ setup(
     author_email='eknyquist@gmail.com',
     license='Apache 2.0',
     packages=['wikichangewatcher'],
+    cmdclass={'test': RunWikiChangeWatcherTests},
     entry_points={
         'console_scripts': [
             'wikiwatch=wikichangewatcher.cli:main'
