@@ -10,10 +10,10 @@ from wikichangewatcher import WikiChangeWatcher
 import matplotlib.pyplot as plt
 
 # Max. number of samples in the averaging window
-MAX_WINDOW_LEN = 10
+MAX_WINDOW_LEN = 5
 
 # Interval between new samples for the averaging window, in seconds
-INTERVAL_SECS = 10
+INTERVAL_SECS = 60
 
 
 class EditRateCounter():
@@ -97,6 +97,6 @@ except KeyboardInterrupt:
     plt.plot(timestamps, raw_rates, label="Raw page edit rate", linestyle='--')
     plt.plot(timestamps, avg_rates, label="Avg. page edit rate")
     plt.ylabel("Page edits per minute")
-    plt.xlabel("UTC time")
+    plt.xlabel("Time of day")
     plt.legend()
     plt.show()
