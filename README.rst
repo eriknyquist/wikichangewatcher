@@ -464,3 +464,78 @@ once every 5 seconds.
                 print(f"{rate:.2f} avg. page edits per min. ({since_last} in the last {INTERVAL_SECS} secs)")
     except KeyboardInterrupt:
         wc.stop()
+
+
+``wikiwatch`` CLI tool
+======================
+
+A CLI program called ``wikiwatch`` is provided, which uses the ``wikichangewatcher``
+package to provide some monitoring capabilities at the command line:
+
+::
+
+	usage: wikiwatch [-h] [-a ADDRESS] [-u USERNAME_REGEX] [-f FIELD_NAME VALUE_RGX]
+					 [-s FORMAT_STRING] [--version]
+
+	Real-time monitoring of global Wikipedia page edits, with flexible filtering
+	features.
+
+	options:
+	  -h, --help            show this help message and exit
+	  -a ADDRESS, --address ADDRESS
+							Adds an IPv4 or Ipv6 address range to look for. Any
+							anonymous edits made by IPv4 addresses in this range
+							will be displayed. Each dot-separated field (for IPv4
+							addresses) or colon-separated field (for IPv6 addresses)
+							may be optionally replaced with with an asterisk (which
+							acts as a wildcard, matching any value), or a range of
+							values. For example, the address range "*.22.33.0-55"
+							would match all IPv4 addresses in the range 0.22.33.0
+							through 255.22.33.50. This option can be used multiple
+							times to add multiple IP address filters.
+	  -u USERNAME_REGEX, --username-regex USERNAME_REGEX
+							Adds a username regex to look for. Any edits made by
+							logged-in users with a username that matches this
+							regular expression will be displayed. This option can be
+							used multiple times to add multiple username filters.
+	  -f FIELD_NAME VALUE_RGX, --field FIELD_NAME VALUE_RGX
+							Adds a regex to look for in a specific named field in
+							the JSON event provided by the wikimedia recent changes
+							stream (described here
+							https://www.mediawiki.org/wiki/Manual:RCFeed). Any edit
+							events which have a value matching the VALUE_RGX regular
+							expression stored in the FIELD_NAME field will be
+							displayed.
+	  -s FORMAT_STRING, --format-string FORMAT_STRING
+							Define a custom format string to control how filtered
+							results are displayed. Format tokens may be used to
+							display data from any named field in the JSON event
+							described at
+							https://www.mediawiki.org/wiki/Manual:RCFeed. Format
+							tokens must be in the form "{field_name}", where
+							"field_name" is the name of any field from the JSON
+							event. This option can only be used once (Default:
+							"{user} edited {title_url}").
+	  --version             Show version and exit.
+
+	NOTE: if run without arguments, then all anonymous edits (any IPv4 or IPv6
+	address) will be shown.
+
+	EXAMPLES:
+
+	Show only edits made by one of two specific IP addresses:
+
+		wikiwatch -a 89.44.33.22 -a 2001:0db8:85a3:0000:0000:8a2e:0370:7334
+
+	Show only edits made by IPv4 addresses in the range 88.44.0-33.0-22:
+
+		wikiwatch -a 88.44.0-33.0-22
+
+	Show only edits made by IPv4 addresses in the range 232.22.0-255.0-255:
+
+		wikiwatch -a 232.22.*.*
+
+	Show only edits made by usernames that contain the word "Bot" or "bot":
+
+		wikiwatch -f user "[Bb]ot"
+
