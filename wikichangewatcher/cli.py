@@ -4,7 +4,7 @@ import argparse
 
 from wikichangewatcher import (
     WikiChangeWatcher, FilterCollection, IpV4Filter, IpV6Filter,
-    FieldRegexSearchFilter, MatchType, __version__
+    FieldRegexSearchFilter, UsernameRegexSearchFilter, MatchType, __version__
 )
 
 VERSION = "1.0.0"
