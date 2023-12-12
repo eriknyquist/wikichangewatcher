@@ -1,7 +1,7 @@
 __author__ = "Erik Nyquist"
 __license__ = "Apache 2.0"
 __maintainer__ = "Erik Nyquist"
-__version__ = "0.2.2"
+__version__ = "1.0.0"
 __email__ = "eknyquist@gmail.com"
 
 from wikichangewatcher.wikichangewatcher import FieldFilter, FilterCollection, IpV4Filter, IpV6Filter, WikiChangeWatcher, MatchType

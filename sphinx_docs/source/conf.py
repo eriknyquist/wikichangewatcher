@@ -22,7 +22,7 @@ project = 'wikichangewatcher'
 copyright = '2023, Erik K. Nyquist'
 author = 'Erik K. Nyquist'
 
-version = 'v0.2.2'
+version = 'v1.0.0'
 
 # The full version, including alpha/beta/rc tags
 release = version
