@@ -42,7 +42,7 @@ def _main():
                                      formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=80))
 
     parser.add_argument('-a', '--address', action='append', default=None, help=('Adds an IPv4 or Ipv6 address range to '
-                        'look for. Any anonymous edits made by IPv4 addresses in this range will be displayed. '
+                        'look for. Any anonymous edits made by IP addresses in this range will be displayed. '
                         'Each dot-separated field (for IPv4 addresses) or colon-separated field (for IPv6 addresses) '
                         'may be optionally replaced with with an asterisk (which acts as a wildcard, matching any '
                         'value), or a range of values. For example, the address range "*.22.33.0-55" would match all '
