@@ -426,7 +426,7 @@ class WikiChangeWatcher(object):
     def __init__(self, *filters):
         self._thread = None
         self._stop_event = threading.Event()
-        self._filters = filters
+        self._filters = list(filters)
         self._session = None
         self._client = None
         self._on_edit_handler = None

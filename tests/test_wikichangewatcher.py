@@ -499,6 +499,42 @@ class TestWikiChangeWatcher(TestCase):
         self.assertEqual(url_2_event['user'], 'a:a:a:a:a:a:a:a')
 
     @mock.patch('wikichangewatcher.wikichangewatcher.SSEClient')
+    def test_pageurl_filter_collection_combine_bitwise_swapped_order(self, mock_sseclient):
+        filtered_events = Queue()
+
+        def handle_event(event):
+            filtered_events.put(event)
+
+        collection1 = FilterCollection(IpV4Filter("1.1.1.1") & PageUrlRegexSearchFilter("john"))
+        collection = (IpV6Filter("a:a:a:a:a:a:a:a") | collection1).on_match(handle_event)
+
+        mock_client = FakeSSEClient([
+            make_event(user="test-user", title_url="url_user"),
+            make_event(user="192.44.44.44", title_url="url_a"),
+            make_event(user="1.1.1.1", title_url="john"),
+            make_event(user="a:a:a:a:a:a:a:a", title_url="john2"),
+            make_event(user="1.1.1.1", title_url="sally"),
+            make_event(user="1.1.1.2", title_url="john"),
+        ])
+
+        mock_sseclient.return_value = mock_client
+
+        wc = WikiChangeWatcher(collection)
+        wc.run()
+        time.sleep(0.1)
+        wc.stop()
+
+        self.assertEqual(filtered_events.qsize(), 2)
+
+        url_1_event = filtered_events.get()
+        url_2_event = filtered_events.get()
+        self.assertEqual(url_1_event['title_url'], 'john')
+        self.assertEqual(url_1_event['user'], '1.1.1.1')
+        self.assertEqual(url_2_event['title_url'], 'john2')
+        self.assertEqual(url_2_event['user'], 'a:a:a:a:a:a:a:a')
+
+
+    @mock.patch('wikichangewatcher.wikichangewatcher.SSEClient')
     def test_pageurl_filter_collections_same_match_type(self, mock_sseclient):
         filtered_events = Queue()
 
@@ -536,6 +572,43 @@ class TestWikiChangeWatcher(TestCase):
         self.assertEqual(user_2_event['user'], '2.2.2.2')
         self.assertEqual(user_3_event['title_url'], 'mark')
         self.assertEqual(user_3_event['user'], '3.3.3.3')
+
+    @mock.patch('wikichangewatcher.wikichangewatcher.SSEClient')
+    def test_filter_collection_add_filter(self, mock_sseclient):
+        filtered_events = Queue()
+
+        def handle_event(event):
+            filtered_events.put(event)
+
+        collection1 = FilterCollection(IpV4Filter("1.1.1.1") & PageUrlRegexSearchFilter("john"))
+
+        collection2 = FilterCollection(IpV6Filter("a:a:a:a:a:a:a:a"))
+        collection = (collection1 | collection2).on_match(handle_event)
+
+        mock_client = FakeSSEClient([
+            make_event(user="test-user", title_url="url_user"),
+            make_event(user="192.44.44.44", title_url="url_a"),
+            make_event(user="1.1.1.1", title_url="john"),
+            make_event(user="a:a:a:a:a:a:a:a", title_url="john2"),
+            make_event(user="1.1.1.1", title_url="sally"),
+            make_event(user="1.1.1.2", title_url="john"),
+        ])
+
+        mock_sseclient.return_value = mock_client
+
+        wc = WikiChangeWatcher().add_filter(collection)
+        wc.run()
+        time.sleep(0.1)
+        wc.stop()
+
+        self.assertEqual(filtered_events.qsize(), 2)
+
+        url_1_event = filtered_events.get()
+        url_2_event = filtered_events.get()
+        self.assertEqual(url_1_event['title_url'], 'john')
+        self.assertEqual(url_1_event['user'], '1.1.1.1')
+        self.assertEqual(url_2_event['title_url'], 'john2')
+        self.assertEqual(url_2_event['user'], 'a:a:a:a:a:a:a:a')
 
     @mock.patch('wikichangewatcher.wikichangewatcher.SSEClient')
     def test_invalid_bitwise_combine(self, mock_sseclient):
