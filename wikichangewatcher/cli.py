@@ -55,7 +55,8 @@ def _main():
                         help=('Adds a regex to look for in a specific named field in the JSON event provided by the '
                         'wikimedia recent changes stream (described here '
                         'https://www.mediawiki.org/wiki/Manual:RCFeed). Any edit events which have a value matching '
-                        'the VALUE_RGX regular expression stored in the FIELD_NAME field will be displayed.'))
+                        'the VALUE_RGX regular expression stored in the FIELD_NAME field will be displayed. This '
+                        'option can be used multiple times to add multiple named field filters.'))
     parser.add_argument('-s', '--format-string', action='store', default="{user} edited {title_url}", help=('Define a '
                         'custom format string to control how filtered results are displayed. Format tokens may be used '
                         'to display data from any named field in the JSON event described at '

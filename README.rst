@@ -1,4 +1,4 @@
-WikiChangeWatcher 0.2.2
+WikiChangeWatcher 1.0.0
 =======================
 
 .. |tests_badge| image:: https://github.com/eriknyquist/wikichangewatcher/actions/workflows/tests.yml/badge.svg
@@ -512,7 +512,8 @@ package to provide some monitoring capabilities at the command line:
                             https://www.mediawiki.org/wiki/Manual:RCFeed). Any edit
                             events which have a value matching the VALUE_RGX regular
                             expression stored in the FIELD_NAME field will be
-                            displayed.
+                            displayed. This option can be used multiple times to add
+                            multiple named field filters.
       -s FORMAT_STRING, --format-string FORMAT_STRING
                             Define a custom format string to control how filtered
                             results are displayed. Format tokens may be used to
