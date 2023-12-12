@@ -4,15 +4,14 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>wikichangewatcher package &mdash; wikichangewatcher v0.2.2 documentation</title>
+  <title>wikichangewatcher package &mdash; wikichangewatcher v1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -34,7 +33,7 @@
             wikichangewatcher
           </a>
               <div class="version">
-                v0.2.2
+                v1.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -51,18 +50,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-wikichangewatcher.wikichangewatcher">wikichangewatcher.wikichangewatcher module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldFilter"><code class="docutils literal notranslate"><span class="pre">FieldFilter</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter"><code class="docutils literal notranslate"><span class="pre">FieldRegexMatchFilter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter"><code class="docutils literal notranslate"><span class="pre">FieldRegexSearchFilter</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldStringFilter"><code class="docutils literal notranslate"><span class="pre">FieldStringFilter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FilterCollection"><code class="docutils literal notranslate"><span class="pre">FilterCollection</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.IpV4Filter"><code class="docutils literal notranslate"><span class="pre">IpV4Filter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.IpV6Filter"><code class="docutils literal notranslate"><span class="pre">IpV6Filter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.MatchType"><code class="docutils literal notranslate"><span class="pre">MatchType</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.PageUrlFilter"><code class="docutils literal notranslate"><span class="pre">PageUrlFilter</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter"><code class="docutils literal notranslate"><span class="pre">PageUrlRegexMatchFilter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter"><code class="docutils literal notranslate"><span class="pre">PageUrlRegexSearchFilter</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.UsernameFilter"><code class="docutils literal notranslate"><span class="pre">UsernameFilter</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter"><code class="docutils literal notranslate"><span class="pre">UsernameRegexMatchFilter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.UsernameRegexSearchFilter"><code class="docutils literal notranslate"><span class="pre">UsernameRegexSearchFilter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#wikichangewatcher.wikichangewatcher.WikiChangeWatcher"><code class="docutils literal notranslate"><span class="pre">WikiChangeWatcher</span></code></a></li>
 </ul>
@@ -161,18 +154,6 @@ JSON event data matches some expected format/values.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">FieldRegexMatchFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fieldname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#FieldRegexMatchFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldFilter" title="wikichangewatcher.wikichangewatcher.FieldFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldFilter</span></code></a></p>
-<p>FieldFilter implementation to watch for a named field that matches a provided regular expression</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fieldname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#FieldRegexMatchFilter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">FieldRegexSearchFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fieldname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#FieldRegexSearchFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldFilter" title="wikichangewatcher.wikichangewatcher.FieldFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldFilter</span></code></a></p>
@@ -181,18 +162,6 @@ the provided regular expression</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fieldname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#FieldRegexSearchFilter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.FieldStringFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">FieldStringFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fieldname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#FieldStringFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.FieldStringFilter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldFilter" title="wikichangewatcher.wikichangewatcher.FieldFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldFilter</span></code></a></p>
-<p>FieldFilter implementation to watch for a named field with a specific fixed string</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.FieldStringFilter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fieldname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#FieldStringFilter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.FieldStringFilter.__init__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -316,30 +285,6 @@ by a dash), representing any value between and including the two written values.
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.PageUrlFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">PageUrlFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#PageUrlFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.PageUrlFilter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldStringFilter" title="wikichangewatcher.wikichangewatcher.FieldStringFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldStringFilter</span></code></a></p>
-<p>FieldString Filter implementation to watch for a specific page URL</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.PageUrlFilter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#PageUrlFilter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.PageUrlFilter.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">PageUrlRegexMatchFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#PageUrlRegexMatchFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter" title="wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldRegexMatchFilter</span></code></a></p>
-<p>FieldRegexMatchFilter implementation to watch for a “title_url” field that matches a provided regular expression</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#PageUrlRegexMatchFilter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">PageUrlRegexSearchFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#PageUrlRegexSearchFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter" title="wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldRegexSearchFilter</span></code></a></p>
@@ -348,30 +293,6 @@ a provided regular expression</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#PageUrlRegexSearchFilter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.UsernameFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">UsernameFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#UsernameFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.UsernameFilter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldStringFilter" title="wikichangewatcher.wikichangewatcher.FieldStringFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldStringFilter</span></code></a></p>
-<p>FieldStringFilter implementation to watch for a “user” field with a specific fixed string</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.UsernameFilter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#UsernameFilter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.UsernameFilter.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">UsernameRegexMatchFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#UsernameRegexMatchFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter" title="wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldRegexMatchFilter</span></code></a></p>
-<p>FieldRegexMatchFilter implementation to watch for a “user” field that matches a provided regular expression</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#UsernameRegexMatchFilter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter.__init__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

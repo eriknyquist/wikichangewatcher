@@ -10,8 +10,7 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
@@ -142,10 +141,6 @@
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">self_valid</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">other_valid</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot combine </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">self_filter</span> <span class="ow">and</span> <span class="n">other_filter</span><span class="p">:</span>
-            <span class="c1"># Both operands are a single filter</span>
-            <span class="k">return</span> <span class="n">FilterCollection</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">set_match_type</span><span class="p">(</span><span class="n">match_type</span><span class="p">)</span>
-
         <span class="k">elif</span> <span class="n">self_collection</span> <span class="ow">and</span> <span class="n">other_collection</span><span class="p">:</span>
             <span class="c1"># Both operands are a filter collection</span>
             <span class="k">if</span> <span class="n">this</span><span class="o">.</span><span class="n">_match_type</span> <span class="o">==</span> <span class="n">match_type</span><span class="p">:</span>
@@ -155,6 +150,10 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">this</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">this</span>
+
+        <span class="k">if</span> <span class="n">self_filter</span> <span class="ow">and</span> <span class="n">other_filter</span><span class="p">:</span>
+            <span class="c1"># Both operands are a single filter</span>
+            <span class="k">return</span> <span class="n">FilterCollection</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">set_match_type</span><span class="p">(</span><span class="n">match_type</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># one operand is a filter and the other is a collection</span>
@@ -307,9 +306,6 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;user&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
         <span class="n">ipaddr</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -441,52 +437,6 @@
 
         <span class="k">return</span> <span class="kc">True</span></div>
 
-
-<div class="viewcode-block" id="FieldStringFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldStringFilter">[docs]</a><span class="k">class</span> <span class="nc">FieldStringFilter</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FieldFilter implementation to watch for a named field with a specific fixed string</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="FieldStringFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldStringFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FieldStringFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="o">=</span> <span class="n">fieldname</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span></div>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span><span class="si">}</span><span class="s2">, </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="k">return</span> <span class="n">json_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
-
-
-<div class="viewcode-block" id="FieldRegexMatchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter">[docs]</a><span class="k">class</span> <span class="nc">FieldRegexMatchFilter</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FieldFilter implementation to watch for a named field that matches a provided regular expression</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="FieldRegexMatchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldRegexMatchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FieldRegexMatchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="o">=</span> <span class="n">fieldname</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">regex_string</span> <span class="o">=</span> <span class="n">regex</span></div>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span><span class="si">}</span><span class="s2">, </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regex_string</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span><span class="p">]))</span></div>
-
-
 <div class="viewcode-block" id="FieldRegexSearchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.FieldRegexSearchFilter">[docs]</a><span class="k">class</span> <span class="nc">FieldRegexSearchFilter</span><span class="p">(</span><span class="n">FieldFilter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    FieldFilter implementation to watch for a named field that contains one or more instances of</span>
@@ -511,69 +461,13 @@
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldname</span><span class="p">]))</span></div>
 
 
-<div class="viewcode-block" id="PageUrlFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlFilter">[docs]</a><span class="k">class</span> <span class="nc">PageUrlFilter</span><span class="p">(</span><span class="n">FieldStringFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FieldString Filter implementation to watch for a specific page URL</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="PageUrlFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PageUrlFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;title_url&quot;</span><span class="p">,</span> <span class="n">page_url</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="PageUrlRegexMatchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter">[docs]</a><span class="k">class</span> <span class="nc">PageUrlRegexMatchFilter</span><span class="p">(</span><span class="n">FieldRegexMatchFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FieldRegexMatchFilter implementation to watch for a &quot;title_url&quot; field that matches a provided regular expression</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="PageUrlRegexMatchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlRegexMatchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameRegexMatchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;title_url&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regex_string</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
-
-
 <div class="viewcode-block" id="PageUrlRegexSearchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter">[docs]</a><span class="k">class</span> <span class="nc">PageUrlRegexSearchFilter</span><span class="p">(</span><span class="n">FieldRegexSearchFilter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    FieldRegexSearchFilter implementation to watch for a &quot;title_url&quot; field that contains one or more matches of</span>
 <span class="sd">    a provided regular expression</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="PageUrlRegexSearchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.PageUrlRegexSearchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameRegexSearchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;title_url&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regex_string</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="UsernameFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameFilter">[docs]</a><span class="k">class</span> <span class="nc">UsernameFilter</span><span class="p">(</span><span class="n">FieldStringFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FieldStringFilter implementation to watch for a &quot;user&quot; field with a specific fixed string</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="UsernameFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="UsernameRegexMatchFilter"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter">[docs]</a><span class="k">class</span> <span class="nc">UsernameRegexMatchFilter</span><span class="p">(</span><span class="n">FieldRegexMatchFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FieldRegexMatchFilter implementation to watch for a &quot;user&quot; field that matches a provided regular expression</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="UsernameRegexMatchFilter.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.UsernameRegexMatchFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">UsernameRegexMatchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PageUrlRegexSearchFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;title_url&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regex_string</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
@@ -605,7 +499,7 @@
 <div class="viewcode-block" id="WikiChangeWatcher.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">filters</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="n">filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_on_edit_handler</span> <span class="o">=</span> <span class="kc">None</span>
@@ -718,9 +612,14 @@
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="k">continue</span>
 
+                <span class="n">missing_keys</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;namespace&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;title_url&quot;</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">change</span><span class="p">:</span>
-                        <span class="k">continue</span>
+                        <span class="n">missing_keys</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+
+                <span class="k">if</span> <span class="n">missing_keys</span><span class="p">:</span>
+                    <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_log_events</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;namespace&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
