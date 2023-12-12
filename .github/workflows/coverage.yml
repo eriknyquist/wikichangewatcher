@@ -22,7 +22,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
         # Install package requirements
       - name: Install package requirements
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt coverage
         # Install the package using the setup.py
       - name: Install package
         run: python setup.py install
