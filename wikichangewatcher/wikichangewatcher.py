@@ -148,7 +148,7 @@ class FilterCollection(FieldFilter):
         return match
 
     def __str__(self):
-        params = ','.join(f"{f}" for f in self._filters)
+        params = ', '.join(f"{f}" for f in self._filters)
         mtype = "ALL" if self._match_type == MatchType.ALL else "ANY"
         return f"{self.__class__.__name__}({mtype}, {params})"
 
