@@ -1,4 +1,4 @@
-WikiChangeWatcher 1.0.0
+WikiChangeWatcher 1.1.0
 =======================
 
 .. |tests_badge| image:: https://github.com/eriknyquist/wikichangewatcher/actions/workflows/tests.yml/badge.svg
