@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>wikichangewatcher package &mdash; wikichangewatcher v1.0.0 documentation</title>
+  <title>wikichangewatcher package &mdash; wikichangewatcher v1.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -33,7 +33,7 @@
             wikichangewatcher
           </a>
               <div class="version">
-                v1.0.0
+                v1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -312,14 +312,24 @@ a provided regular expression</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.WikiChangeWatcher">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">WikiChangeWatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#WikiChangeWatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.WikiChangeWatcher" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wikichangewatcher.wikichangewatcher.</span></span><span class="sig-name descname"><span class="pre">WikiChangeWatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#WikiChangeWatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.WikiChangeWatcher" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Consumes all events from the Wikimedia “recent changes” stream, and
 applies all provided FieldFilter instances to each received event.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.WikiChangeWatcher.USER_AGENT">
+<span class="sig-name descname"><span class="pre">USER_AGENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Mozilla/5.0</span> <span class="pre">(Windows</span> <span class="pre">NT</span> <span class="pre">10.0;</span> <span class="pre">Win64;</span> <span class="pre">x64)</span> <span class="pre">AppleWebKit/537.36</span> <span class="pre">(KHTML,</span> <span class="pre">like</span> <span class="pre">Gecko)</span> <span class="pre">Chrome/141.0.0.0</span> <span class="pre">Safari/537.36'</span></em><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.USER_AGENT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.WikiChangeWatcher.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#WikiChangeWatcher.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wikichangewatcher/wikichangewatcher.html#WikiChangeWatcher.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_agent</strong> – String to use for User-Agent in HTTP requests to wikipedia.         If empty string, or None, default will be used.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="wikichangewatcher.wikichangewatcher.WikiChangeWatcher.add_filter">

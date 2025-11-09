@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>wikichangewatcher.wikichangewatcher &mdash; wikichangewatcher v0.2.2 documentation</title>
+  <title>wikichangewatcher.wikichangewatcher &mdash; wikichangewatcher v1.1.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             wikichangewatcher
           </a>
               <div class="version">
-                v0.2.2
+                v1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -221,7 +221,7 @@
         <span class="k">return</span> <span class="n">match</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
         <span class="n">mtype</span> <span class="o">=</span> <span class="s2">&quot;ALL&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_type</span> <span class="o">==</span> <span class="n">MatchType</span><span class="o">.</span><span class="n">ALL</span> <span class="k">else</span> <span class="s2">&quot;ANY&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">)&quot;</span>
 
@@ -496,7 +496,13 @@
 <span class="sd">    Consumes all events from the Wikimedia &quot;recent changes&quot; stream, and</span>
 <span class="sd">    applies all provided FieldFilter instances to each received event.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="WikiChangeWatcher.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">filters</span><span class="p">):</span>
+    <span class="n">USER_AGENT</span> <span class="o">=</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36&quot;</span>
+
+<div class="viewcode-block" id="WikiChangeWatcher.__init__"><a class="viewcode-back" href="../../wikichangewatcher.html#wikichangewatcher.wikichangewatcher.WikiChangeWatcher.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_agent</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">filters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param user_agent: String to use for User-Agent in HTTP requests to wikipedia.\</span>
+<span class="sd">         If empty string, or None, default will be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
@@ -506,10 +512,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_log_events</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_retry_count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_retries</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_agent</span> <span class="o">=</span> <span class="n">user_agent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_agent</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
+            <span class="n">user_agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">USER_AGENT</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">user_agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_agent</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">SSEClient</span><span class="p">(</span><span class="n">WIKIMEDIA_URL</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;connected to </span><span class="si">{</span><span class="n">WIKIMEDIA_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 

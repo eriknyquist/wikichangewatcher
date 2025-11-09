@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>wikichangewatcher &mdash; wikichangewatcher v1.0.0 documentation</title>
+  <title>wikichangewatcher &mdash; wikichangewatcher v1.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -33,7 +33,7 @@
             wikichangewatcher
           </a>
               <div class="version">
-                v1.0.0
+                v1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -413,26 +413,39 @@ as the company name.</p>
 
 
 <span class="n">filter_collection</span> <span class="o">=</span> <span class="n">FilterCollection</span><span class="p">(</span>
-    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;136.200.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range assigned to CA dept. of water resources</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;136.200.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range #1 assigned to CA dept. of water resources</span>
     <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;151.143.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range assigned to CA dept. of technology</span>
     <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;160.88.0-255.0-255&quot;</span><span class="p">),</span>                                     <span class="c1"># IP4 range assigned to CA dept. of insurance</span>
     <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.56.110.0-255&quot;</span><span class="p">),</span>                                       <span class="c1"># IP4 range #1 assigned to CA dept. of corrections</span>
     <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;153.48.0-255.0-255&quot;</span><span class="p">),</span>                                     <span class="c1"># IP4 range #2 assigned to CA dept. of corrections</span>
     <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;149.136.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range assigned to CA dept. of transportation</span>
     <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2602:814:5000-5fff:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">),</span>  <span class="c1"># IP6 range assigned CA dept. of transportation</span>
-    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.251.92.0-255&quot;</span><span class="p">),</span>                                       <span class="c1"># IP4 range assigned to CA dept. of general services</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.251.92.0-255&quot;</span><span class="p">),</span>                                       <span class="c1"># IP4 range #1 assigned to CA dept. of general services</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;198.22.115.0-255&quot;</span><span class="p">),</span>                                       <span class="c1"># IP4 range #2 assigned to CA dept. of general services</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;198.22.114.0-255&quot;</span><span class="p">),</span>                                       <span class="c1"># IP4 range #3 assigned to CA dept. of general services</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.251.92.0-255&quot;</span><span class="p">),</span>                                       <span class="c1"># IP4 range #4 assigned to CA dept. of general services</span>
     <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;159.145.0-255.0-255&quot;</span><span class="p">),</span>                                    <span class="c1"># IP4 range assigned to CA dept. of consumer affairs</span>
     <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;167.10.0-255.0-255&quot;</span><span class="p">),</span>                                     <span class="c1"># IP4 range assigned to CA dept. of justice</span>
     <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;192.58.200-203.0-255&quot;</span><span class="p">),</span>                                   <span class="c1"># IP4 range assigned to Bureau of Justice Statistics in WA</span>
-    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2607:f330:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">)</span>     <span class="c1"># IP6 range assigned to the US dept. of justice in WA</span>
-<span class="p">)</span><span class="o">.</span><span class="n">set_match_type</span><span class="p">(</span><span class="n">MatchType</span><span class="o">.</span><span class="n">ALL</span><span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">)</span>
+    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2607:f330:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">),</span>    <span class="c1"># IP6 range assigned to the US dept. of justice in WA</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;64.183.62.236-239&quot;</span><span class="p">),</span>                                      <span class="c1"># IP4 range #1 assigned to CA dept. of food and agriculture</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;71.74.161.12-15&quot;</span><span class="p">),</span>                                        <span class="c1"># IP4 range #2 assigned to CA dept. of food and agriculture</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;128.92.251.208-215&quot;</span><span class="p">),</span>                                     <span class="c1"># IP4 range #3 assigned to CA dept. of food and agriculture</span>
+    <span class="n">IpV4Filter</span><span class="p">(</span><span class="s2">&quot;69.75.155.212-215&quot;</span><span class="p">),</span>                                      <span class="c1"># IP4 range #4 assigned to CA dept. of food and agriculture</span>
+    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2600:5801:34a:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">),</span>       <span class="c1"># IP6 range #1 assigned to CA dept. of food and agriculture</span>
+    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2600:5801:c129:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">),</span>      <span class="c1"># IP6 range #2 assigned to CA dept. of food and agriculture</span>
+    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2600:5c00:30f5:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">),</span>      <span class="c1"># IP6 range #3 assigned to CA dept. of food and agriculture</span>
+    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2600:5c00:4e3b:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">),</span>      <span class="c1"># IP6 range #4 assigned to CA dept. of food and agriculture</span>
+    <span class="n">IpV6Filter</span><span class="p">(</span><span class="s2">&quot;2600:6c2e:eb3:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff&quot;</span><span class="p">),</span>       <span class="c1"># IP6 range #5 assigned to CA dept. of food and agriculture</span>
+<span class="p">)</span><span class="o">.</span><span class="n">set_match_type</span><span class="p">(</span><span class="n">MatchType</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span><span class="o">.</span><span class="n">on_match</span><span class="p">(</span><span class="n">match_handler</span><span class="p">)</span>
 
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using filters: </span><span class="si">{</span><span class="n">filter_collection</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">wc</span> <span class="o">=</span> <span class="n">WikiChangeWatcher</span><span class="p">(</span><span class="n">filter_collection</span><span class="p">)</span>
 <span class="n">wc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
 <span class="c1"># Watch for page edits forever until KeyboardInterrupt</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="k">while</span> <span class="n">wc</span><span class="o">.</span><span class="n">is_running</span><span class="p">():</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
     <span class="n">wc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
@@ -546,7 +559,7 @@ package to provide some monitoring capabilities at the command line:</p>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
   <span class="o">-</span><span class="n">a</span> <span class="n">ADDRESS</span><span class="p">,</span> <span class="o">--</span><span class="n">address</span> <span class="n">ADDRESS</span>
                         <span class="n">Adds</span> <span class="n">an</span> <span class="n">IPv4</span> <span class="ow">or</span> <span class="n">Ipv6</span> <span class="n">address</span> <span class="nb">range</span> <span class="n">to</span> <span class="n">look</span> <span class="k">for</span><span class="o">.</span> <span class="n">Any</span>
-                        <span class="n">anonymous</span> <span class="n">edits</span> <span class="n">made</span> <span class="n">by</span> <span class="n">IPv4</span> <span class="n">addresses</span> <span class="ow">in</span> <span class="n">this</span> <span class="nb">range</span>
+                        <span class="n">anonymous</span> <span class="n">edits</span> <span class="n">made</span> <span class="n">by</span> <span class="n">IP</span> <span class="n">addresses</span> <span class="ow">in</span> <span class="n">this</span> <span class="nb">range</span>
                         <span class="n">will</span> <span class="n">be</span> <span class="n">displayed</span><span class="o">.</span> <span class="n">Each</span> <span class="n">dot</span><span class="o">-</span><span class="n">separated</span> <span class="n">field</span> <span class="p">(</span><span class="k">for</span> <span class="n">IPv4</span>
                         <span class="n">addresses</span><span class="p">)</span> <span class="ow">or</span> <span class="n">colon</span><span class="o">-</span><span class="n">separated</span> <span class="n">field</span> <span class="p">(</span><span class="k">for</span> <span class="n">IPv6</span> <span class="n">addresses</span><span class="p">)</span>
                         <span class="n">may</span> <span class="n">be</span> <span class="n">optionally</span> <span class="n">replaced</span> <span class="k">with</span> <span class="k">with</span> <span class="n">an</span> <span class="n">asterisk</span> <span class="p">(</span><span class="n">which</span>
