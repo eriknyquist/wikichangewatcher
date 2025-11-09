@@ -38,7 +38,7 @@ setup(
     url='http://github.com/eriknyquist/wikichangewatcher',
     author='Erik Nyquist',
     author_email='eknyquist@gmail.com',
-    license='Apache 2.0',
+    license='MIT',
     packages=['wikichangewatcher'],
     cmdclass={'test': RunWikiChangeWatcherTests},
     entry_points={
