@@ -2,7 +2,7 @@
 # a specific wikipedia page
 
 import time
-from wikichangewatcher import WikiChangeWatcher, FilterCollection, IpV4Filter, PageUrlFilter
+from wikichangewatcher import WikiChangeWatcher, FilterCollection, IpV4Filter, PageUrlRegexSearchFilter
 
 # Callback function to run whenever an event matching our filters is seen
 def match_handler(json_data):
@@ -15,14 +15,14 @@ def match_handler(json_data):
 # Default match type is is MatchType.ALL
 filters = FilterCollection(
     # Filter for any edits to a specific wikipedia page URL
-    PageUrlFilter("https://es.wikipedia.org/wiki/Reclus_(La_Rioja)"),
+    PageUrlRegexSearchFilter("https://es.wikipedia.org/wiki/Reclus_(La_Rioja)"),
 
     # Filter for any IP address (any anonymous edit)
     IpV4Filter("*.*.*.*"),
 ).on_match(match_handler)
 
 
-wc = WikiChangeWatcher(filters)
+wc = WikiChangeWatcher(None, filters)
 
 wc.run()
 

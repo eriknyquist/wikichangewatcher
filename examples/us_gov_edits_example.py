@@ -40,7 +40,7 @@ filter_collection = FilterCollection(
     IpV6Filter("2600:6c2e:eb3:0-ffff:0-ffff:0-ffff:0-ffff:0-ffff"),       # IP6 range #5 assigned to CA dept. of food and agriculture
 ).set_match_type(MatchType.ANY).on_match(match_handler)
 
-wc = WikiChangeWatcher(filter_collection)
+wc = WikiChangeWatcher(None, filter_collection)
 wc.run()
 
 # Watch for page edits forever until KeyboardInterrupt

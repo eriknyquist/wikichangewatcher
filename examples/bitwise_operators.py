@@ -4,7 +4,7 @@
 # operators instead of creating FilterCollection instances directly.
 
 import time
-from wikichangewatcher import WikiChangeWatcher, UsernameRegexSearchFilter, PageUrlFilter
+from wikichangewatcher import WikiChangeWatcher, UsernameRegexSearchFilter, PageUrlRegexSearchFilter
 
 # Callback function to run whenever an event matching our filters is seen
 def match_handler(json_data):
@@ -15,14 +15,14 @@ def match_handler(json_data):
     print("{user} edited {title_url}".format(**json_data))
 
 # Make a filter collection that matches any one of several wikipedia pages
-page_urls = (PageUrlFilter("https://en.wikipedia.org/wiki/Python_(programming_language)") |
-             PageUrlFilter("https://en.wikipedia.org/wiki/CPython") |
-             PageUrlFilter("https://en.wikipedia.org/wiki/Server-sent_events"))
+page_urls = (PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/Python_(programming_language)") |
+             PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/CPython") |
+             PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/Server-sent_events"))
 
 # Make a filter collection that matches one of the page URLs, *and* a specific username regex
 main_filter = page_urls & UsernameRegexSearchFilter(r"[Bb][Oo][Tt]")
 
-wc = WikiChangeWatcher(main_filter)
+wc = WikiChangeWatcher(None, main_filter)
 
 wc.run()
 

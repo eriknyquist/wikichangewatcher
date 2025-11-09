@@ -70,7 +70,7 @@ class EditRateCounter():
 ratecounter = EditRateCounter()
 
 # Create a watcher with no filters-- we want to see every single edit
-wc = WikiChangeWatcher().on_edit(ratecounter.edit_handler)
+wc = WikiChangeWatcher(None).on_edit(ratecounter.edit_handler)
 
 wc.run()
 

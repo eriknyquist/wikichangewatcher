@@ -13,7 +13,7 @@ def match_handler(json_data):
     print("{user} edited {title_url}".format(**json_data))
 
 # Watch for edits made by users with "bot" in their username
-wc = WikiChangeWatcher(UsernameRegexSearchFilter(r"[Bb]ot|BOT").on_match(match_handler))
+wc = WikiChangeWatcher(None, UsernameRegexSearchFilter(r"[Bb]ot|BOT").on_match(match_handler))
 
 wc.run()
 

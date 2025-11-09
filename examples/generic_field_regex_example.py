@@ -15,7 +15,7 @@ def match_handler(json_data):
 
 # Watch for edits made to any page that has the word "publish" in the page URL
 # ("title_url" field in the JSON object)
-wc = WikiChangeWatcher(FieldRegexSearchFilter("title_url", r"[Pp]ublish").on_match(match_handler))
+wc = WikiChangeWatcher(None, FieldRegexSearchFilter("title_url", r"[Pp]ublish").on_match(match_handler))
 
 wc.run()
 

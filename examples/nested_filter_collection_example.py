@@ -2,7 +2,7 @@
 # wikipedia page URLs by users with the word "bot" in their name
 
 import time
-from wikichangewatcher import WikiChangeWatcher, FilterCollection, UsernameRegexSearchFilter, PageUrlFilter, MatchType
+from wikichangewatcher import WikiChangeWatcher, FilterCollection, UsernameRegexSearchFilter, PageUrlRegexSearchFilter, MatchType
 
 # Callback function to run whenever an event matching our filters is seen
 def match_handler(json_data):
@@ -15,9 +15,9 @@ def match_handler(json_data):
 # Make a filter collection that matches any one of several wikipedia pages
 page_urls = FilterCollection(
     # Filters for any edits to multiple specific wikipedia page URLs
-    PageUrlFilter("https://en.wikipedia.org/wiki/Python_(programming_language)"),
-    PageUrlFilter("https://en.wikipedia.org/wiki/CPython"),
-    PageUrlFilter("https://en.wikipedia.org/wiki/Server-sent_events"),
+    PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/Python_(programming_language)"),
+    PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/CPython"),
+    PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/Server-sent_events"),
 ).set_match_type(MatchType.ANY)
 
 # Make a filter collection that matches one of the page URLs, *and* a specific username regex
@@ -26,7 +26,7 @@ main_filter = FilterCollection(
     UsernameRegexSearchFilter(r"[Bb][Oo][Tt]")
 ).set_match_type(MatchType.ALL).on_match(match_handler)
 
-wc = WikiChangeWatcher(main_filter)
+wc = WikiChangeWatcher(None, main_filter)
 
 wc.run()
 

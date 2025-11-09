@@ -65,7 +65,7 @@ The following example code watches for edits made by any IPv4 or IPv6 address.
         print("{user} edited {title_url}".format(**json_data))
 
     # Watch for anonymous edits from any IPv4  or IPv6 address
-    wc = WikiChangeWatcher((IpV4Filter() | IpV6Filter()).on_match(match_handler))
+    wc = WikiChangeWatcher(None, (IpV4Filter() | IpV6Filter()).on_match(match_handler))
     wc.run()
 
     # Watch for page edits forever until KeyboardInterrupt
@@ -98,7 +98,7 @@ The following example code watches for edits made by 3 specific IPv4 address ran
         print("{user} edited {title_url}".format(**json_data))
 
     # Watch for anonymous edits from some specific IP address ranges
-    wc = WikiChangeWatcher(IpV4Filter("192.60.38.225-230").on_match(match_handler),
+    wc = WikiChangeWatcher(None, IpV4Filter("192.60.38.225-230").on_match(match_handler),
                            IpV6Filter("2601:205:4882:810:5D1D:BC41:61BB:0-ffff").on_match(match_handler))
 
     # Wildcard '*' character can be used in place of a IPv4 or IP46 address field, to ignore that field entirely.
@@ -137,7 +137,7 @@ that contain one or more strings matching a regular expression.
         print("{user} edited {title_url}".format(**json_data))
 
     # Watch for edits made by users with "bot" in their username
-    wc = WikiChangeWatcher(UsernameRegexSearchFilter(r"[Bb]ot|BOT").on_match(match_handler))
+    wc = WikiChangeWatcher(None, UsernameRegexSearchFilter(r"[Bb]ot|BOT").on_match(match_handler))
 
     wc.run()
 
@@ -174,7 +174,7 @@ JSON fields and their descriptions can be found `here <https://www.mediawiki.org
 
     # Watch for edits made to any page that has the word "publish" in the page URL
     # ("title_url" field in the JSON object)
-    wc = WikiChangeWatcher(FieldRegexSearchFilter("title_url", r"[Pp]ublish").on_match(match_handler))
+    wc = WikiChangeWatcher(None, FieldRegexSearchFilter("title_url", r"[Pp]ublish").on_match(match_handler))
 
     wc.run()
 
@@ -197,7 +197,7 @@ The following example watches for anonymous page edits to a specific page URL.
     # a specific wikipedia page
 
     import time
-    from wikichangewatcher import WikiChangeWatcher, FilterCollection, IpV4Filter, PageUrlFilter
+    from wikichangewatcher import WikiChangeWatcher, FilterCollection, IpV4Filter, PageUrlRegexSearchFilter
 
     # Callback function to run whenever an event matching our filters is seen
     def match_handler(json_data):
@@ -210,14 +210,14 @@ The following example watches for anonymous page edits to a specific page URL.
     # Default match type is is MatchType.ALL
     filters = FilterCollection(
         # Filter for any edits to a specific wikipedia page URL
-        PageUrlFilter("https://es.wikipedia.org/wiki/Reclus_(La_Rioja)"),
+        PageUrlRegexSearchFilter("https://es.wikipedia.org/wiki/Reclus_(La_Rioja)"),
 
         # Filter for any IP address (any anonymous edit)
         IpV4Filter("*.*.*.*"),
     ).on_match(match_handler)
 
 
-    wc = WikiChangeWatcher(filters)
+    wc = WikiChangeWatcher(None, filters)
 
     wc.run()
 
@@ -240,7 +240,7 @@ user with the word "bot" in their username.
     # wikipedia page URLs by users with the word "bot" in their name
 
     import time
-    from wikichangewatcher import WikiChangeWatcher, FilterCollection, UsernameRegexSearchFilter, PageUrlFilter, MatchType
+    from wikichangewatcher import WikiChangeWatcher, FilterCollection, UsernameRegexSearchFilter, PageUrlRegexSearchFilter, MatchType
 
     # Callback function to run whenever an event matching our filters is seen
     def match_handler(json_data):
@@ -253,9 +253,9 @@ user with the word "bot" in their username.
     # Make a filter collection that matches any one of several wikipedia pages
     page_urls = FilterCollection(
         # Filters for any edits to multiple specific wikipedia page URLs
-        PageUrlFilter("https://en.wikipedia.org/wiki/Python_(programming_language)"),
-        PageUrlFilter("https://en.wikipedia.org/wiki/CPython"),
-        PageUrlFilter("https://en.wikipedia.org/wiki/Server-sent_events"),
+        PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/Python_(programming_language)"),
+        PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/CPython"),
+        PageUrlRegexSearchFilter("https://en.wikipedia.org/wiki/Server-sent_events"),
     ).set_match_type(MatchType.ANY)
 
     # Make a filter collection that matches one of the page URLs, *and* a specific username regex
@@ -264,7 +264,7 @@ user with the word "bot" in their username.
         UsernameRegexSearchFilter(r"[Bb][Oo][Tt]")
     ).set_match_type(MatchType.ALL).on_match(match_handler)
 
-    wc = WikiChangeWatcher(main_filter)
+    wc = WikiChangeWatcher(None, main_filter)
 
     wc.run()
 
@@ -315,7 +315,7 @@ page URL:
 
 .. code:: python
 
-    from wikichangewatcher import IpV4Filter, IpV6Filter, PageUrlFilter
+    from wikichangewatcher import IpV4Filter, IpV6Filter, PageUrlRegexSearchFilter
 
     PAGE_URL = "https://en.wikipedia.org/wiki/Hayaguchi_Station"
 
@@ -323,7 +323,7 @@ page URL:
     def match_handler(json_data):
         print("{user} edited {title_url}".format(**json_data))
 
-    filter_collection = ((IpV4Filter() | IpV6Filter()) & PageUrlFilter(PAGE_URL)).on_match(match_handler)
+    filter_collection = ((IpV4Filter() | IpV6Filter()) & PageUrlRegexSearchFilter(PAGE_URL)).on_match(match_handler)
 
 Monitoring "anonymous" edits made from IP address ranges owned by US government depts./agencies
 -----------------------------------------------------------------------------------------------
@@ -381,7 +381,7 @@ as the company name.
     ).set_match_type(MatchType.ANY).on_match(match_handler)
 
     print(f"Using filters: {filter_collection}")
-    wc = WikiChangeWatcher(filter_collection)
+    wc = WikiChangeWatcher(None, filter_collection)
     wc.run()
 
     # Watch for page edits forever until KeyboardInterrupt
@@ -470,7 +470,7 @@ once every 5 seconds.
     ratecounter = EditRateCounter()
 
     # Create a watcher with no filters-- we want to see every single edit
-    wc = WikiChangeWatcher().on_edit(ratecounter.edit_handler)
+    wc = WikiChangeWatcher(None).on_edit(ratecounter.edit_handler)
 
     wc.run()
 
@@ -494,68 +494,74 @@ package to provide some monitoring capabilities at the command line:
 
 ::
 
-    usage: wikiwatch [-h] [-a ADDRESS] [-u USERNAME_REGEX] [-f FIELD_NAME VALUE_RGX]
-                     [-s FORMAT_STRING] [--version]
+	usage: wikiwatch [-h] [-a ADDRESS] [-u USERNAME_REGEX] [-f FIELD_NAME VALUE_RGX]
+					 [-s FORMAT_STRING] [-g USER_AGENT_STRING] [--version]
 
-    Real-time monitoring of global Wikipedia page edits, with flexible filtering
-    features.
+	Real-time monitoring of global Wikipedia page edits, with flexible filtering
+	features.
 
-    options:
-      -h, --help            show this help message and exit
-      -a ADDRESS, --address ADDRESS
-                            Adds an IPv4 or Ipv6 address range to look for. Any
-                            anonymous edits made by IP addresses in this range
-                            will be displayed. Each dot-separated field (for IPv4
-                            addresses) or colon-separated field (for IPv6 addresses)
-                            may be optionally replaced with with an asterisk (which
-                            acts as a wildcard, matching any value), or a range of
-                            values. For example, the address range "*.22.33.0-55"
-                            would match all IPv4 addresses in the range 0.22.33.0
-                            through 255.22.33.50. This option can be used multiple
-                            times to add multiple IP address filters.
-      -u USERNAME_REGEX, --username-regex USERNAME_REGEX
-                            Adds a username regex to look for. Any edits made by
-                            logged-in users with a username that matches this
-                            regular expression will be displayed. This option can be
-                            used multiple times to add multiple username filters.
-      -f FIELD_NAME VALUE_RGX, --field FIELD_NAME VALUE_RGX
-                            Adds a regex to look for in a specific named field in
-                            the JSON event provided by the wikimedia recent changes
-                            stream (described here
-                            https://www.mediawiki.org/wiki/Manual:RCFeed). Any edit
-                            events which have a value matching the VALUE_RGX regular
-                            expression stored in the FIELD_NAME field will be
-                            displayed. This option can be used multiple times to add
-                            multiple named field filters.
-      -s FORMAT_STRING, --format-string FORMAT_STRING
-                            Define a custom format string to control how filtered
-                            results are displayed. Format tokens may be used to
-                            display data from any named field in the JSON event
-                            described at
-                            https://www.mediawiki.org/wiki/Manual:RCFeed. Format
-                            tokens must be in the form "{field_name}", where
-                            "field_name" is the name of any field from the JSON
-                            event. This option can only be used once (Default:
-                            "{user} edited {title_url}").
-      --version             Show version and exit.
+	options:
+	  -h, --help            show this help message and exit
+	  -a ADDRESS, --address ADDRESS
+							Adds an IPv4 or Ipv6 address range to look for. Any
+							anonymous edits made by IP addresses in this range will
+							be displayed. Each dot-separated field (for IPv4
+							addresses) or colon-separated field (for IPv6 addresses)
+							may be optionally replaced with with an asterisk (which
+							acts as a wildcard, matching any value), or a range of
+							values. For example, the address range "*.22.33.0-55"
+							would match all IPv4 addresses in the range 0.22.33.0
+							through 255.22.33.50. This option can be used multiple
+							times to add multiple IP address filters.
+	  -u USERNAME_REGEX, --username-regex USERNAME_REGEX
+							Adds a username regex to look for. Any edits made by
+							logged-in users with a username that matches this
+							regular expression will be displayed. This option can be
+							used multiple times to add multiple username filters.
+	  -f FIELD_NAME VALUE_RGX, --field FIELD_NAME VALUE_RGX
+							Adds a regex to look for in a specific named field in
+							the JSON event provided by the wikimedia recent changes
+							stream (described here
+							https://www.mediawiki.org/wiki/Manual:RCFeed). Any edit
+							events which have a value matching the VALUE_RGX regular
+							expression stored in the FIELD_NAME field will be
+							displayed. This option can be used multiple times to add
+							multiple named field filters.
+	  -s FORMAT_STRING, --format-string FORMAT_STRING
+							Define a custom format string to control how filtered
+							results are displayed. Format tokens may be used to
+							display data from any named field in the JSON event
+							described at
+							https://www.mediawiki.org/wiki/Manual:RCFeed. Format
+							tokens must be in the form "{field_name}", where
+							"field_name" is the name of any field from the JSON
+							event. This option can only be used once (Default:
+							"{user} edited {title_url}").
+	  -g USER_AGENT_STRING, --user-agent-string USER_AGENT_STRING
+							Define a User-Agent string to be used in the header of
+							HHTTP requests sent to wikipedia.If unset, a default
+							will be used. (Default: "Mozilla/5.0 (Windows NT 10.0;
+							Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
+							Chrome/141.0.0.0 Safari/537.36".
+	  --version             Show version and exit.
 
-    NOTE: if run without arguments, then all anonymous edits (any IPv4 or IPv6
-    address) will be shown.
+	NOTE: if run without arguments, then all anonymous edits (any IPv4 or IPv6
+	address) will be shown.
 
-    EXAMPLES:
+	EXAMPLES:
 
-    Show only edits made by one of two specific IP addresses:
+	Show only edits made by one of two specific IP addresses:
 
-        wikiwatch -a 89.44.33.22 -a 2001:0db8:85a3:0000:0000:8a2e:0370:7334
+		wikiwatch -a 89.44.33.22 -a 2001:0db8:85a3:0000:0000:8a2e:0370:7334
 
-    Show only edits made by IPv4 addresses in the range 88.44.0-33.0-22:
+	Show only edits made by IPv4 addresses in the range 88.44.0-33.0-22:
 
-        wikiwatch -a 88.44.0-33.0-22
+		wikiwatch -a 88.44.0-33.0-22
 
-    Show only edits made by IPv4 addresses in the range 232.22.0-255.0-255:
+	Show only edits made by IPv4 addresses in the range 232.22.0-255.0-255:
 
-        wikiwatch -a 232.22.*.*
+		wikiwatch -a 232.22.*.*
 
-    Show only edits made by usernames that contain the word "Bot" or "bot":
+	Show only edits made by usernames that contain the word "Bot" or "bot":
 
-        wikiwatch -f user "[Bb]ot"
+		wikiwatch -f user "[Bb]ot"

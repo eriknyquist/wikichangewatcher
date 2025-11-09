@@ -13,7 +13,7 @@ def match_handler(json_data):
     print("{user} edited {title_url}".format(**json_data))
 
 # Watch for anonymous edits from any IPv4  or IPv6 address
-wc = WikiChangeWatcher((IpV4Filter() | IpV6Filter()).on_match(match_handler))
+wc = WikiChangeWatcher(None, (IpV4Filter() | IpV6Filter()).on_match(match_handler))
 wc.run()
 
 # Watch for page edits forever until KeyboardInterrupt
