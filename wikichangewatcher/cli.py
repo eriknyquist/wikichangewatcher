@@ -63,6 +63,9 @@ def _main():
                         'https://www.mediawiki.org/wiki/Manual:RCFeed. Format tokens must be in the form '
                         '"{field_name}", where "field_name" is the name of any field from the JSON event. This option '
                         'can only be used once (Default: "%(default)s").'))
+    parser.add_argument('-g', '--user-agent-string', action='store', default=None, help=('Define a '
+                        'User-Agent string to be used in the header of HHTTP requests sent to wikipedia.'
+                        f'If unset, a default will be used. (Default: "{WikiChangeWatcher.USER_AGENT}".'))
     parser.add_argument('--version', action='store_true', default=False, help='Show version and exit.')
     args = parser.parse_args()
 
@@ -114,7 +117,7 @@ def _main():
 
     print(f"Using filters: {filters}")
     collection = FilterCollection(*filters).set_match_type(MatchType.ANY).on_match(match_handler)
-    wc = WikiChangeWatcher(collection)
+    wc = WikiChangeWatcher(args.user_agent_string, collection)
     wc.run()
 
     # Watch for page edits forever until KeyboardInterrupt

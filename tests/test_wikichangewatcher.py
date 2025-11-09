@@ -60,7 +60,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -97,7 +97,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -150,7 +150,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -203,7 +203,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -240,7 +240,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -293,7 +293,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -346,7 +346,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -378,7 +378,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -413,7 +413,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(collection)
+        wc = WikiChangeWatcher(None, collection)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -449,7 +449,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(collection)
+        wc = WikiChangeWatcher(None, collection)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -484,7 +484,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(collection)
+        wc = WikiChangeWatcher(None, collection)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -519,7 +519,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(collection)
+        wc = WikiChangeWatcher(None, collection)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -556,7 +556,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(collection)
+        wc = WikiChangeWatcher(None, collection)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -596,7 +596,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher().add_filter(collection)
+        wc = WikiChangeWatcher(None).add_filter(collection)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -650,7 +650,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()
@@ -702,8 +702,8 @@ class TestWikiChangeWatcher(TestCase):
         self.assertEqual(str(FieldRegexSearchFilter("blabla", "bloobloo")), 'FieldRegexSearchFilter(blabla, "bloobloo")')
         self.assertEqual(repr(FieldRegexSearchFilter("blabla", "bloobloo")), 'FieldRegexSearchFilter(blabla, "bloobloo")')
 
-        self.assertEqual(str(FilterCollection(IpV6Filter(), IpV4Filter())), 'FilterCollection(ALL, IpV6Filter("*:*:*:*:*:*:*:*"),IpV4Filter("*.*.*.*"))')
-        self.assertEqual(repr(FilterCollection(IpV6Filter(), IpV4Filter())), 'FilterCollection(ALL, IpV6Filter("*:*:*:*:*:*:*:*"),IpV4Filter("*.*.*.*"))')
+        self.assertEqual(str(FilterCollection(IpV6Filter(), IpV4Filter())), 'FilterCollection(ALL, IpV6Filter("*:*:*:*:*:*:*:*"), IpV4Filter("*.*.*.*"))')
+        self.assertEqual(repr(FilterCollection(IpV6Filter(), IpV4Filter())), 'FilterCollection(ALL, IpV6Filter("*:*:*:*:*:*:*:*"), IpV4Filter("*.*.*.*"))')
 
     @mock.patch('wikichangewatcher.wikichangewatcher.SSEClient')
     def test_dropped_sse_event(self, mock_sseclient):
@@ -719,7 +719,7 @@ class TestWikiChangeWatcher(TestCase):
 
         mock_sseclient.return_value = mock_client
 
-        wc = WikiChangeWatcher(fltr)
+        wc = WikiChangeWatcher(None, fltr)
         wc.run()
         time.sleep(0.1)
         wc.stop()

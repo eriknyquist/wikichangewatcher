@@ -423,7 +423,13 @@ class WikiChangeWatcher(object):
     Consumes all events from the Wikimedia "recent changes" stream, and
     applies all provided FieldFilter instances to each received event.
     """
-    def __init__(self, *filters):
+    USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+
+    def __init__(self, user_agent : str, *filters):
+        """
+        :param user_agent: String to use for User-Agent in HTTP requests to wikipedia.\
+         If empty string, or None, default will be used.
+        """
         self._thread = None
         self._stop_event = threading.Event()
         self._filters = list(filters)
@@ -433,10 +439,18 @@ class WikiChangeWatcher(object):
         self._ignore_log_events = True
         self._retry_count = 0
         self._max_retries = 10
+        self._user_agent = user_agent
         self._connect()
 
     def _connect(self):
         self._session = requests.Session()
+
+        if self._user_agent in [None, ""]:
+            user_agent = self.USER_AGENT
+        else:
+            user_agent = self._user_agent
+
+        self._session.headers.update({'User-Agent': user_agent})
         self._client = SSEClient(WIKIMEDIA_URL, session=self._session)
         logger.debug(f"connected to {WIKIMEDIA_URL}")
 
